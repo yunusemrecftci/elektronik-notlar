@@ -381,6 +381,64 @@ body {
 }
 
 .diagram svg text { font-family: 'IBM Plex Mono', monospace; }
+.diagram svg {
+  display: block;
+  margin: 0 auto;
+  max-width: 860px;
+  height: auto;
+  cursor: zoom-in;
+}
+
+/* Diagram zoom modal */
+.zoom-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(6px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1.25rem;
+}
+.zoom-modal.open { display: flex; }
+.zoom-modal-inner {
+  width: min(980px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  background: rgba(17,17,24,0.92);
+  border: 1px solid var(--border2);
+  border-radius: 14px;
+  padding: 1rem;
+}
+.zoom-modal-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.25rem 0.25rem 0.75rem;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  margin-bottom: 0.75rem;
+}
+.zoom-modal-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px;
+  color: var(--text2);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.zoom-btn {
+  padding: 0.45rem 0.75rem;
+  border-radius: 8px;
+  border: 1px solid rgba(120,120,200,0.25);
+  background: rgba(255,255,255,0.03);
+  color: var(--text2);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+}
+.zoom-btn:hover { border-color: rgba(77,159,255,0.45); color: var(--text); }
+.zoom-stage svg { width: 100%; height: auto; cursor: default; }
 
 /* Table */
 .data-table {
@@ -584,6 +642,7 @@ body {
   <div class="nav-item" onclick="navigateToSection('examples', this)"><span class="nav-dot"></span>Çözümlü Örnekler</div>
   <div class="nav-item" onclick="navigateToSection('glossary', this)"><span class="nav-dot"></span>Terimler</div>
   <div class="nav-item" onclick="navigateToSection('formula-table', this)"><span class="nav-dot"></span>Formül Tablosu</div>
+  <div class="nav-item" onclick="navigateToSection('tricks', this)"><span class="nav-dot"></span>Sınav Tüyoları</div>
   <div class="nav-item" onclick="navigateToSection('quiz', this)"><span class="nav-dot"></span>Quiz (40 Soru)</div>
 </nav>
 
@@ -1054,7 +1113,7 @@ body {
 
     <div class="card">
       <div class="card-title">Örnek: N-type Drift</div>
-      <p style="font-size:13px;">N_D = 10¹⁷, E = 0.1 V/cm → J ≈ qnμ_nE</p>
+      <p style="font-size:13px;">\(N_D = 10^{17}\), \(E = 0.1\ \text{V/cm}\) → \(J \approx qn\mu_nE\)</p>
       <div class="formula-block blue" style="font-size:13px;margin:0.75rem 0;">\[ J = (1.6\times 10^{-19})(10^{17})(1350)(0.1) \approx \mathbf{2.16}\ \text{A/cm}^2 \]</div>
     </div>
 
@@ -1130,8 +1189,8 @@ body {
 
     <table class="data-table">
       <tr><th>Sabit</th><th>Değer</th><th>Açıklama</th></tr>
-      <tr><td>Dₙ</td><td class="mono">35 cm²/s</td><td style="color:var(--text2);">Elektron diffusion sabiti</td></tr>
-      <tr><td>Dₚ</td><td class="mono">12 cm²/s</td><td style="color:var(--text2);">Hole diffusion sabiti</td></tr>
+      <tr><td class="mono">\(D_n\)</td><td class="mono">35 cm²/s</td><td style="color:var(--text2);">Elektron diffusion sabiti</td></tr>
+      <tr><td class="mono">\(D_p\)</td><td class="mono">12 cm²/s</td><td style="color:var(--text2);">Hole diffusion sabiti</td></tr>
     </table>
 
     <div class="card">
@@ -1269,10 +1328,10 @@ body {
 
     <table class="data-table">
       <tr><th>Malzeme</th><th>ρ (Ω·cm)</th><th>Açıklama</th></tr>
-      <tr><td>Bakır</td><td class="mono">~10⁻⁶</td><td style="color:var(--text2);">Çok iyi iletken</td></tr>
-      <tr><td>P-type Si (10¹⁶)</td><td class="mono">1.56</td><td style="color:var(--text2);">Doplı yarıiletken</td></tr>
-      <tr><td>Saf Si</td><td class="mono">2.28×10⁵</td><td style="color:var(--text2);">Kötü iletken</td></tr>
-      <tr><td>Cam</td><td class="mono">~10¹⁴</td><td style="color:var(--text2);">Yalıtkan</td></tr>
+      <tr><td>Bakır</td><td class="mono">\( \sim 10^{-6} \)</td><td style="color:var(--text2);">Çok iyi iletken</td></tr>
+      <tr><td>P-type Si (\(10^{16}\))</td><td class="mono">1.56</td><td style="color:var(--text2);">Doplı yarıiletken</td></tr>
+      <tr><td>Saf Si</td><td class="mono">\(2.28\times10^{5}\)</td><td style="color:var(--text2);">Kötü iletken</td></tr>
+      <tr><td>Cam</td><td class="mono">\( \sim 10^{14} \)</td><td style="color:var(--text2);">Yalıtkan</td></tr>
     </table>
 
     <div class="callout info">
@@ -1576,7 +1635,7 @@ body {
       <div class="card-title">Minority Carrier Injection (Forward Bias)</div>
       <p style="font-size:13px;">Forward bias'ta majority carrier'lar junction'ı geçer ve karşı tarafta minority carrier olur. Junction'dan uzaklaştıkça üstel azalır:</p>
       <div class="formula-block" style="font-size:13px;margin:0.75rem 0;">\[ p_n(x)\propto e^{-x/L_p} \]</div>
-      <p style="font-size:13px;"><span class="hl-teal">Lₚ, Lₙ = diffusion length</span> — recombine olmadan gidilen mesafe.</p>
+      <p style="font-size:13px;"><span class="hl-teal">\(L_p, L_n\) = diffusion length</span> — recombine olmadan gidilen mesafe.</p>
     </div>
 
     <div class="card">
@@ -1650,7 +1709,7 @@ body {
     </table>
 
     <div class="formula-block amber">\[ I_S = A q n_i^2\left(\frac{D_p}{L_p N_D} + \frac{D_n}{L_n N_A}\right) \]</div>
-    <div class="formula-label">saturation current — ~10⁻¹⁵ A, sıcaklığa çok bağlı</div>
+    <div class="formula-label">saturation current — ~\(10^{-15}\) A, sıcaklığa çok bağlı</div>
 
     <div class="card">
       <div class="card-title">Example 3.6 — pn Junction</div>
@@ -1715,7 +1774,7 @@ body {
     </div>
 
     <div class="card">
-      <div class="card-title">Örnek A — Mass action (np = nᵢ²)</div>
+      <div class="card-title">Örnek A — Mass action (\(np = n_i^2\))</div>
       <p style="font-size:13px;"><strong>Soru:</strong> \(n=5\times10^{15}\ \text{cm}^{-3}\) ise \(p\) nedir? (\(n_i=1.5\times10^{10}\))</p>
       <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(p=n_i^2/n=(2.25\times10^{20})/(5\times10^{15})=4.5\times10^4\ \text{cm}^{-3}\).</p>
     </div>
@@ -1785,6 +1844,44 @@ body {
     </table>
   </div>
 
+  <hr class="divider">
+
+  <!-- Sınav Tüyoları -->
+  <div class="section" id="tricks">
+    <div class="section-header">
+      <span class="section-num">Sınav</span>
+      <h3>Sınav için Tüyolar / Trikler</h3>
+    </div>
+
+    <div class="two-col">
+      <div class="card">
+        <div class="card-title">En çok çıkan 8 refleks</div>
+        <p style="font-size:13px;"><strong>1)</strong> Denge: \(\,np=n_i^2\). Biri ↑ ise diğeri ↓.</p>
+        <p style="font-size:13px;"><strong>2)</strong> Drift: \(J=\sigma E\) ve \(\sigma=q(p\mu_p+n\mu_n)\).</p>
+        <p style="font-size:13px;"><strong>3)</strong> Diffusion işareti: hole’da \(-qD_p\,dp/dx\), elektron’da \(+qD_n\,dn/dx\).</p>
+        <p style="font-size:13px;"><strong>4)</strong> Einstein: \(D=\mu V_T\) (300K: \(V_T\approx0.0259\) V).</p>
+        <p style="font-size:13px;"><strong>5)</strong> pn: \(\frac{x_n}{x_p}=\frac{N_A}{N_D}\) → az doplanan taraf genişler.</p>
+        <p style="font-size:13px;"><strong>6)</strong> Reverse bias: \(V\to V_0+V_R\) → \(W\propto\sqrt{V}\) artar.</p>
+        <p style="font-size:13px;"><strong>7)</strong> Diyot: forward’da \(i\approx I_Se^{v/V_T}\). 10× akım → \(\Delta v\approx V_T\ln10\approx 60\) mV.</p>
+        <p style="font-size:13px;"><strong>8)</strong> “≈” görürsen: minority’yi ihmal et (N-type’ta \(p\) çok küçük gibi).</p>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Hızlı kontrol listesi</div>
+        <p style="font-size:13px;"><strong>• Birimler:</strong> \(\mu\) [cm²/Vs], \(D\) [cm²/s], \(J\) [A/cm²], \(\rho\) [Ω·cm].</p>
+        <p style="font-size:13px;"><strong>• İşaret:</strong> Akım yönü “pozitif yük akışı”. Elektron hız yönü akım yönüyle aynı olmak zorunda değil.</p>
+        <p style="font-size:13px;"><strong>• Log soruları:</strong> \(V=V_T\ln(I/I_S)\). \(\ln(10)\approx2.303\), \(\ln(10^{k})\approx2.303k\).</p>
+        <p style="font-size:13px;"><strong>• Büyük/küçük:</strong> \(n_i\) küçük → saf Si kötü iletken. Doping → \(\rho\) dramatik düşer.</p>
+        <p style="font-size:13px;"><strong>• pn sezgi:</strong> önce diffusion başlar, sonra bound charge, sonra \(E_0\) ve \(V_0\) dengeyi kurar.</p>
+      </div>
+    </div>
+
+    <div class="callout tip">
+      <span class="callout-icon">→</span>
+      <span>Çok soru “hangi taraf büyür / hangi işaret çıkar / 10× akım kaç mV” tipinde gelir. Bunları refleks yapınca zaman kazanırsın.</span>
+    </div>
+  </div>
+
 </main>
 </div>
 
@@ -1798,8 +1895,50 @@ function navigateToSection(id, navEl) {
   if (navEl && navEl.classList) navEl.classList.add('active');
 }
 
+// Diagram zoom (click any diagram SVG)
+window.addEventListener('DOMContentLoaded', function () {
+  const modal = document.getElementById('zoom-modal');
+  const stage = document.getElementById('zoom-stage');
+  const closeBtn = document.getElementById('zoom-close');
+
+  function close() {
+    if (!modal) return;
+    modal.classList.remove('open');
+    modal.setAttribute('aria-hidden', 'true');
+    if (stage) stage.innerHTML = '';
+  }
+
+  function openWith(svg) {
+    if (!modal || !stage) return;
+    stage.innerHTML = '';
+    const clone = svg.cloneNode(true);
+    // remove zoom cursor in modal
+    clone.style.cursor = 'default';
+    stage.appendChild(clone);
+    modal.classList.add('open');
+    modal.setAttribute('aria-hidden', 'false');
+  }
+
+  document.querySelectorAll('.diagram svg').forEach(function (svg) {
+    svg.addEventListener('click', function (e) {
+      e.preventDefault();
+      openWith(svg);
+    });
+  });
+
+  if (closeBtn) closeBtn.addEventListener('click', close);
+  if (modal) {
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) close();
+    });
+  }
+  window.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') close();
+  });
+});
+
 // Active nav on scroll
-const sections = ['s31','s32','s33','s332','s333','s334','s341','s342','s343','s35','formulas','examples','glossary','formula-table','quiz'];
+const sections = ['s31','s32','s33','s332','s333','s334','s341','s342','s343','s35','formulas','examples','glossary','formula-table','tricks','quiz'];
 const navItems = document.querySelectorAll('.nav-item');
 
 window.addEventListener('scroll', () => {
@@ -1813,6 +1952,16 @@ window.addEventListener('scroll', () => {
   });
 }, { passive: true });
 </script>
+
+<div class="zoom-modal" id="zoom-modal" aria-hidden="true">
+  <div class="zoom-modal-inner" role="dialog" aria-modal="true" aria-label="Diagram zoom">
+    <div class="zoom-modal-toolbar">
+      <div class="zoom-modal-title">diagram zoom</div>
+      <button class="zoom-btn" type="button" id="zoom-close">Close</button>
+    </div>
+    <div class="zoom-stage" id="zoom-stage"></div>
+  </div>
+</div>
 
 <style>
 /* Quiz styles */
@@ -2023,14 +2172,14 @@ const quizData = [
   {
     tag: "3.1",
     q: "In an intrinsic semiconductor, n = p = <span class='blank'></span>.",
-    answers: ["ni","nᵢ","n_i"],
-    explanation: "Saf (intrinsic) yarıiletken'de doping yok → tüm taşıyıcılar ısıl üretimden → n = p = nᵢ (intrinsic carrier concentration)."
+    answers: ["ni","n_i","ni"],
+    explanation: "Saf (intrinsic) yarıiletken'de doping yok → tüm taşıyıcılar ısıl üretimden → \\(n=p=n_i\\) (intrinsic carrier concentration)."
   },
   {
     tag: "3.1",
-    q: "The intrinsic carrier concentration nᵢ for silicon at 300K is approximately <span class='blank'></span> cm⁻³.",
-    answers: ["1.5e10","1.5×10¹⁰","1.5x10^10","1.5 × 10¹⁰"],
-    explanation: "nᵢ = 1.5×10¹⁰ cm⁻³ (oda sıcaklığında silikon için standart değer). Bu çok küçük bir sayı — saf silikon kötü iletkendir."
+    q: "The intrinsic carrier concentration \\(n_i\\) for silicon at 300K is approximately <span class='blank'></span> \\(\\text{cm}^{-3}\\).",
+    answers: ["1.5e10","1.5x10^10","1.5×10^10","1.5*10^10","1.5×10¹⁰","1.5x10¹⁰"],
+    explanation: "\\(n_i \\approx 1.5\\times 10^{10}\\ \\text{cm}^{-3}\\) (300K, Si). Bu çok küçük bir sayı — saf silikon kötü iletkendir."
   },
   {
     tag: "3.2",
@@ -2065,14 +2214,14 @@ const quizData = [
   {
     tag: "3.2",
     q: "The mass action law states that n · p = <span class='blank'></span>.",
-    answers: ["ni²","nᵢ²","ni^2","nᵢ^2","n_i²","n_i^2"],
-    explanation: "Kütle etkisi yasası: n × p = nᵢ². Bu çarpım her zaman sabittir. n arttıkça p azalır, tersi de doğrudur."
+    answers: ["ni^2","n_i^2","ni2","ni²","n_i²"],
+    explanation: "Kütle etkisi yasası: \\(np=n_i^2\\). Bu çarpım her zaman sabittir. n arttıkça p azalır, tersi de doğrudur."
   },
   {
     tag: "3.2",
-    q: "In N-type silicon with n = 10¹⁶ cm⁻³, the hole concentration p = <span class='blank'></span> cm⁻³.",
-    answers: ["2.25e4","2.25×10⁴","22500","2.25x10^4"],
-    explanation: "p = nᵢ²/n = 2.25×10²⁰ / 10¹⁶ = 2.25×10⁴ cm⁻³. Üs: 20−16 = 4. Elektron hole'dan 10¹² kat fazla."
+    q: "In N-type silicon with \\(n = 10^{16}\\ \\text{cm}^{-3}\\), the hole concentration \\(p\\) = <span class='blank'></span> \\(\\text{cm}^{-3}\\). (use \\(n_i=1.5\\times 10^{10}\\))",
+    answers: ["2.25e4","2.25x10^4","22500","2.25×10^4","2.25×10⁴"],
+    explanation: "\\(p=n_i^2/n=(2.25\\times10^{20})/10^{16}=2.25\\times10^{4}\\ \\text{cm}^{-3}\\)."
   },
   {
     tag: "3.3",
@@ -2083,8 +2232,8 @@ const quizData = [
   {
     tag: "3.3",
     q: "The drift velocity of holes is defined as v_p = <span class='blank'></span>.",
-    answers: ["μpE","μ_p·E","μ_pE","mu_p*E"],
-    explanation: "Drift hızı = mobility × elektrik alan. Hole için v_p = μₚE, elektron için v_n = −μₙE (ters yön)."
+    answers: ["mupE","mu_pE","mu_p*E","μpE","μ_pE","μ_p·E"],
+    explanation: "Drift hızı = mobility × elektrik alan. Hole için \\(v_p=\\mu_pE\\), elektron için \\(v_n=-\\mu_nE\\) (ters yön)."
   },
   {
     tag: "3.3",
@@ -2196,21 +2345,21 @@ const quizData = [
   },
   {
     tag: "3.4",
-    q: "The saturation current Iₛ is independent of <span class='blank'></span> but heavily dependent on temperature.",
-    answers: ["V0","V₀","barrier voltage","applied voltage"],
-    explanation: "Iₛ = minority carrier drift current. Depletion bölgesindeki E alanı onları süpürür, bu alan V₀'dan bağımsız. Ama ısıl üretimden geldiği için sıcaklığa çok bağlı."
+    q: "The saturation current \\(I_S\\) is independent of <span class='blank'></span> but heavily dependent on temperature.",
+    answers: ["V0","barrier voltage","built-in voltage","applied voltage"],
+    explanation: "\\(I_S\\) minority-carrier kaynaklıdır ve sıcaklığa çok bağlıdır. Bariyer (\\(V_0\\)) ile doğrudan belirlenmez."
   },
   {
     tag: "3.5",
-    q: "The diode equation is i = Iₛ · (<span class='blank'></span> − 1).",
-    answers: ["e^(v/VT)","e^v/VT","exp(v/VT)","e^(v/Vt)"],
-    explanation: "Tam diyot denklemi: i = Iₛ(e^(v/V_T) − 1). −1 sayesinde v=0'da i=0 olur. V_T = 25.9 mV."
+    q: "The diode equation is \\(i = I_S\\, (\\, <span class='blank'></span> \\,- 1)\\).",
+    answers: ["e^(v/VT)","exp(v/VT)","e^(v/Vt)","e^(v/V_T)","exp(v/V_T)"],
+    explanation: "Tam diyot denklemi: \\(i = I_S\\left(e^{v/V_T} - 1\\right)\\). \\(-1\\) sayesinde \\(v=0\\)'da \\(i=0\\) olur."
   },
   {
     tag: "3.5",
     q: "In reverse bias (large negative v), the diode current approaches <span class='blank'></span>.",
-    answers: ["-Is","-Iₛ","−Is","negative Is","−Iₛ"],
-    explanation: "v >> −V_T iken e^(v/V_T) ≈ 0 → i = Iₛ(0−1) = −Iₛ. Bu çok küçük (−10⁻¹⁵ A), pratikte sıfır kabul edilir."
+    answers: ["-Is","-I_S","-is","-i_s","negative is"],
+    explanation: "Reverse bias'ta \\(e^{v/V_T}\\approx 0\\) → \\(i\\approx -I_S\\) (çok küçük)."
   },
   {
     tag: "3.5",
@@ -2220,14 +2369,339 @@ const quizData = [
   },
   {
     tag: "3.5",
-    q: "The saturation current Iₛ = Aqnᵢ²·(Dₚ/LₚN_D + <span class='blank'></span>).",
-    answers: ["Dn/LnNA","Dₙ/LₙNₐ","D_n/L_n·N_A","Dn/(Ln*NA)"],
-    explanation: "Iₛ formülü: hole ve elektron enjeksiyonlarının toplamı. İlk terim N tarafına geçen hole'lar, ikinci terim P tarafına geçen elektronlar."
+    q: "The saturation current \\(I_S = Aq n_i^2\\left(\\frac{D_p}{L_pN_D} + <span class='blank'></span>\\right)\\).",
+    answers: ["D_n/(L_n*N_A)","Dn/(Ln*NA)","D_n/L_nN_A","D_n/(L_n N_A)","Dn/LnNA"],
+    explanation: "\\(I_S\\) iki enjeksiyon teriminin toplamıdır: \\(\\frac{D_p}{L_pN_D}+\\frac{D_n}{L_nN_A}\\)."
+  }
+
+  // --- Extra questions to reach 100 total ---
+  ,{
+    tag: "3.1",
+    q: "In thermal equilibrium, the net current in an intrinsic semiconductor (no external field, uniform) is <span class='blank'></span>.",
+    answers: ["zero","0"],
+    explanation: "Uniform ve dış alan yoksa yönlü akım yoktur → net akım 0."
+  },
+  {
+    tag: "3.1",
+    q: "At higher temperature, \\(n_i\\) generally <span class='blank'></span>.",
+    answers: ["increases","increases rapidly","increases a lot","increases strongly"],
+    explanation: "Sıcaklık arttıkça bağ kırılması artar → taşıyıcı üretimi artar → \\(n_i\\) artar."
+  },
+  {
+    tag: "3.1",
+    q: "In an intrinsic semiconductor, \\(n/p\\) ratio equals <span class='blank'></span>.",
+    answers: ["1","one"],
+    explanation: "Intrinsic'te \\(n=p\\) → oran 1."
+  },
+  {
+    tag: "3.2",
+    q: "If \\(n\\) increases due to donor doping, \\(p\\) must <span class='blank'></span> (at equilibrium).",
+    answers: ["decrease","decreases","go down","drop"],
+    explanation: "\\(np=n_i^2\\) sabit → n ↑ ise p ↓."
+  },
+  {
+    tag: "3.2",
+    q: "Donor impurities in silicon are typically from group <span class='blank'></span> of the periodic table.",
+    answers: ["5","v","five","group v"],
+    explanation: "Donor: 5 valans elektron (P, As)."
+  },
+  {
+    tag: "3.2",
+    q: "Acceptor impurities in silicon are typically from group <span class='blank'></span>.",
+    answers: ["3","iii","three","group iii"],
+    explanation: "Acceptor: 3 valans elektron (B)."
+  },
+  {
+    tag: "3.2",
+    q: "For N-type material, the majority carrier is <span class='blank'></span> and minority carrier is <span class='blank'></span>.",
+    answers: ["electrons holes","electron hole","electrons,holes","electron,hole"],
+    explanation: "N-type: majority e⁻, minority hole."
+  },
+  {
+    tag: "3.2",
+    q: "For P-type material, the majority carrier is <span class='blank'></span> and minority carrier is <span class='blank'></span>.",
+    answers: ["holes electrons","hole electron","holes,electrons","hole,electron"],
+    explanation: "P-type: majority hole, minority e⁻."
+  },
+  {
+    tag: "3.2",
+    q: "If \\(n = 10^{17}\\ \\text{cm}^{-3}\\) and \\(n_i=1.5\\times10^{10}\\), \\(p\\approx<span class='blank'></span>\\ \\text{cm}^{-3}\\).",
+    answers: ["2.25e3","2.25x10^3","2250","2.25×10^3"],
+    explanation: "\\(p=n_i^2/n=(2.25\\times10^{20})/10^{17}=2.25\\times10^3\\)."
+  },
+  {
+    tag: "3.3",
+    q: "The drift current density is proportional to electric field \\(E\\): \\(J\\propto<span class='blank'></span>\\).",
+    answers: ["E","e"],
+    explanation: "\\(J=\\sigma E\\)."
+  },
+  {
+    tag: "3.3",
+    q: "Mobility \\(\\mu\\) has units of <span class='blank'></span>.",
+    answers: ["cm^2/vs","cm2/vs","cm^2/(v s)","cm2/(vs)"],
+    explanation: "Notlarda: \\(\\mu\\) = cm²/Vs."
+  },
+  {
+    tag: "3.3",
+    q: "Diffusion constant \\(D\\) has units of <span class='blank'></span>.",
+    answers: ["cm^2/s","cm2/s","cm^2/sec","cm2/sec"],
+    explanation: "\\(D\\) = cm²/s."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(dp/dx>0\\), then \\(J_p=-qD_p\\,dp/dx\\) is <span class='blank'></span>.",
+    answers: ["negative","<0","less than zero"],
+    explanation: "Pozitif gradyanda eksi işareti → \\(J_p<0\\)."
+  },
+  {
+    tag: "3.3",
+    q: "Einstein relation at 300K: \\(V_T\\approx<span class='blank'></span>\\ \\text{V}\\).",
+    answers: ["0.0259","0.026","25.9mv","0.0259v"],
+    explanation: "\\(V_T\\approx 0.0259\\) V."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(\\mu=500\\ \\text{cm}^2/\\text{Vs}\\), then \\(D\\approx<span class='blank'></span>\\ \\text{cm}^2/\\text{s}\\) at 300K.",
+    answers: ["12.95","13","12.9"],
+    explanation: "\\(D=\\mu V_T\\approx 500\\times0.0259\\approx 12.95\\)."
+  },
+  {
+    tag: "3.4",
+    q: "The depletion region contains very few <span class='blank'></span> carriers.",
+    answers: ["free","mobile","free charge","mobile charge"],
+    explanation: "Depletion: serbest taşıyıcılar tükenmiştir."
+  },
+  {
+    tag: "3.4",
+    q: "In open-circuit equilibrium, net current across the pn junction is approximately <span class='blank'></span>.",
+    answers: ["zero","0"],
+    explanation: "Diffusion ve drift dengelenir → net akım 0."
+  },
+  {
+    tag: "3.4",
+    q: "Built-in voltage \\(V_0\\) increases when doping levels \\(N_A\\) and \\(N_D\\) <span class='blank'></span>.",
+    answers: ["increase","get larger","rise"],
+    explanation: "\\(V_0=V_T\\ln(N_AN_D/n_i^2)\\)."
+  },
+  {
+    tag: "3.4",
+    q: "Forward bias reduces effective barrier: \\(V_0\\rightarrow<span class='blank'></span>\\).",
+    answers: ["V0-VF","V0 - VF","V0-Vf","v0-vf"],
+    explanation: "Forward: bariyer azalır."
+  },
+  {
+    tag: "3.4",
+    q: "Reverse bias increases effective barrier: \\(V_0\\rightarrow<span class='blank'></span>\\).",
+    answers: ["V0+VR","V0 + VR","V0+Vr","v0+vr"],
+    explanation: "Reverse: bariyer artar."
+  },
+  {
+    tag: "3.4",
+    q: "Depletion width \\(W\\) varies with voltage approximately as \\(W\\propto\\sqrt{<span class='blank'></span>}\\).",
+    answers: ["V","v"],
+    explanation: "Formülde kök var → \\(W\\sim\\sqrt{V}\\)."
+  },
+  {
+    tag: "3.5",
+    q: "In forward region, if current increases by factor 10, diode voltage increases by about <span class='blank'></span> mV (300K).",
+    answers: ["60","59.6","~60","about60"],
+    explanation: "\\(\\Delta v=V_T\\ln 10\\approx 25.9\\text{mV}\\times2.303\\approx 59.6\\text{mV}\\)."
+  },
+  {
+    tag: "3.5",
+    q: "In reverse bias, diode current is approximately <span class='blank'></span> (very small).",
+    answers: ["-is","-I_S","-Is","minus is"],
+    explanation: "Reverse: \\(i\\approx -I_S\\)."
+  },
+  {
+    tag: "3.5",
+    q: "\\(I_S\\) is strongly dependent on <span class='blank'></span>.",
+    answers: ["temperature","T","temp"],
+    explanation: "Sıcaklık arttıkça \\(n_i\\) artar → \\(I_S\\) çok büyür."
+  },
+  {
+    tag: "3.5",
+    q: "If \\(v=0\\), diode current from \\(i=I_S(e^{v/V_T}-1)\\) becomes <span class='blank'></span>.",
+    answers: ["0","zero"],
+    explanation: "\\(e^0-1=0\\)."
+  },
+  {
+    tag: "3.1",
+    q: "The symbol \\(n\\) denotes <span class='blank'></span> concentration.",
+    answers: ["electron","electrons"],
+    explanation: "\\(n\\): electron concentration."
+  },
+  {
+    tag: "3.1",
+    q: "The symbol \\(p\\) denotes <span class='blank'></span> concentration.",
+    answers: ["hole","holes"],
+    explanation: "\\(p\\): hole concentration."
+  },
+  {
+    tag: "3.1",
+    q: "In intrinsic Si at equilibrium, the product \\(np\\) equals <span class='blank'></span>.",
+    answers: ["ni^2","n_i^2","ni2"],
+    explanation: "\\(np=n_i^2\\)."
+  },
+  {
+    tag: "3.2",
+    q: "If a semiconductor is doped so that \\(p\\gg n\\), it is <span class='blank'></span>-type.",
+    answers: ["p","p-type"],
+    explanation: "p çok büyükse P-type."
+  },
+  {
+    tag: "3.2",
+    q: "If a semiconductor is doped so that \\(n\\gg p\\), it is <span class='blank'></span>-type.",
+    answers: ["n","n-type"],
+    explanation: "n çok büyükse N-type."
+  },
+  {
+    tag: "3.2",
+    q: "In an N-type material, increasing \\(N_D\\) generally makes resistivity \\(\\rho\\) <span class='blank'></span>.",
+    answers: ["decrease","smaller","lower"],
+    explanation: "Taşıyıcı sayısı artar → \\(\\sigma\\) artar → \\(\\rho\\) düşer."
+  },
+  {
+    tag: "3.3",
+    q: "Conductivity \\(\\sigma\\) has units of <span class='blank'></span>.",
+    answers: ["s/cm","1/(ohm*cm)","1/ohm-cm","1/ohmcm"],
+    explanation: "Notlarda genelde S/cm kullanılır."
+  },
+  {
+    tag: "3.3",
+    q: "Resistivity \\(\\rho\\) has units of <span class='blank'></span>.",
+    answers: ["ohm*cm","ω·cm","ohmcm","ohm-cm"],
+    explanation: "\\(\\rho\\): Ω·cm."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(\\sigma\\) increases, \\(\\rho\\) will <span class='blank'></span>.",
+    answers: ["decrease","go down","drop","get smaller"],
+    explanation: "\\(\\rho=1/\\sigma\\)."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(E=0\\) and \\(dn/dx=0\\), then electron current density is <span class='blank'></span>.",
+    answers: ["0","zero"],
+    explanation: "Drift yok, diffusion yok → akım yok."
+  },
+  {
+    tag: "3.3",
+    q: "If concentration gradient is zero, diffusion current is <span class='blank'></span>.",
+    answers: ["0","zero"],
+    explanation: "Gradyan yoksa yayılma yok."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(E\\neq 0\\) but \\(n=p=0\\), then drift current is <span class='blank'></span>.",
+    answers: ["0","zero"],
+    explanation: "Taşıyıcı yoksa akım yok."
+  },
+  {
+    tag: "3.3",
+    q: "Electron mobility in Si is <span class='blank'></span> than hole mobility (room temperature).",
+    answers: ["higher","greater","larger"],
+    explanation: "\\(\\mu_n\\approx1350\\), \\(\\mu_p\\approx480\\)."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(\\mu_n\\) is about 2.8× \\(\\mu_p\\), electrons drift <span class='blank'></span> for the same E.",
+    answers: ["faster","more quickly","faster than holes"],
+    explanation: "v = μE → μ büyükse daha hızlı."
+  },
+  {
+    tag: "3.4",
+    q: "In a pn junction, the anode is connected to the <span class='blank'></span>-type region.",
+    answers: ["p","p-type"],
+    explanation: "Anode = P."
+  },
+  {
+    tag: "3.4",
+    q: "In a pn junction, the cathode is connected to the <span class='blank'></span>-type region.",
+    answers: ["n","n-type"],
+    explanation: "Cathode = N."
+  },
+  {
+    tag: "3.4",
+    q: "At equilibrium, diffusion current is balanced by <span class='blank'></span> current.",
+    answers: ["drift"],
+    explanation: "E alanı drift oluşturur ve diffusion’ı dengeler."
+  },
+  {
+    tag: "3.4",
+    q: "If \\(N_A=N_D\\), then \\(x_n\\) is <span class='blank'></span> \\(x_p\\).",
+    answers: ["equal to","equal","the same as"],
+    explanation: "\\(x_n/x_p=N_A/N_D=1\\)."
+  },
+  {
+    tag: "3.4",
+    q: "Forward bias makes depletion width \\(W\\) <span class='blank'></span>.",
+    answers: ["decrease","smaller","shrink","narrow"],
+    explanation: "Bariyer azalır → W daralır."
+  },
+  {
+    tag: "3.4",
+    q: "Reverse bias makes depletion width \\(W\\) <span class='blank'></span>.",
+    answers: ["increase","bigger","grow","widen"],
+    explanation: "Bariyer artar → W genişler."
+  },
+  {
+    tag: "3.5",
+    q: "In forward bias, for \\(v\\gg V_T\\), the diode current is approximately \\(i\\approx<span class='blank'></span>\\).",
+    answers: ["is*exp(v/vt)","I_S*exp(v/V_T)","I_S e^(v/V_T)","Is*e^(v/VT)","I_S*e^(v/V_T)"],
+    explanation: "\\(i\\approx I_Se^{v/V_T}\\)."
+  },
+  {
+    tag: "3.5",
+    q: "For \\(v\\ll 0\\) (large negative), \\(e^{v/V_T}\\) is approximately <span class='blank'></span>.",
+    answers: ["0","zero"],
+    explanation: "Çok negatif üstel → 0’a gider."
+  },
+  {
+    tag: "3.5",
+    q: "If \\(i=I_S\\), then \\(v\\) is approximately <span class='blank'></span>.",
+    answers: ["0","0v","approximately 0"],
+    explanation: "Denklemde \\(i=I_S(e^{v/V_T}-1)\\). i=I_S için \\(e^{v/V_T}-1=1\\) → \\(v=V_T\\ln2\\) (çok küçük)."
+  },
+  {
+    tag: "3.5",
+    q: "A common approximation: for forward conduction, the silicon diode drop is about <span class='blank'></span> V.",
+    answers: ["0.7","0.7v"],
+    explanation: "Pratikte ~0.7 V."
+  },
+  {
+    tag: "3.5",
+    q: "In semilog plot of diode I–V, the forward region is approximately a <span class='blank'></span> line.",
+    answers: ["straight","linear"],
+    explanation: "log(i) ~ v."
+  },
+  {
+    tag: "3.3",
+    q: "If \\(J=\\sigma E\\), then \\(\\sigma\\) equals <span class='blank'></span>.",
+    answers: ["j/e","J/E","j over e"],
+    explanation: "Tanım: \\(\\sigma=J/E\\)."
+  },
+  {
+    tag: "3.4",
+    q: "Built-in voltage formula: \\(V_0 = V_T \\ln( <span class='blank'></span> )\\).",
+    answers: ["na*nd/ni^2","N_A N_D / n_i^2","NAND/ni^2","NA*ND/ni^2","N_A*N_D/n_i^2"],
+    explanation: "\\(\\ln(N_AN_D/n_i^2)\\)."
   }
 ];
 
 function normalizeAnswer(s) {
-  return s.toLowerCase().replace(/\s/g,'').replace(/[×·*]/g,'').replace(/\^/g,'');
+  return (s || "")
+    .toLowerCase()
+    .replace(/\s/g,'')
+    .replace(/[×·*]/g,'x')
+    .replace(/[−–—]/g,'-')
+    .replace(/[₀]/g,'0').replace(/[₁]/g,'1').replace(/[₂]/g,'2').replace(/[₃]/g,'3').replace(/[₄]/g,'4')
+    .replace(/[₅]/g,'5').replace(/[₆]/g,'6').replace(/[₇]/g,'7').replace(/[₈]/g,'8').replace(/[₉]/g,'9')
+    .replace(/[⁰]/g,'0').replace(/[¹]/g,'1').replace(/[²]/g,'2').replace(/[³]/g,'3').replace(/[⁴]/g,'4')
+    .replace(/[⁵]/g,'5').replace(/[⁶]/g,'6').replace(/[⁷]/g,'7').replace(/[⁸]/g,'8').replace(/[⁹]/g,'9')
+    .replace(/[ᵢ]/g,'i')
+    .replace(/[μµ]/g,'mu')
+    .replace(/\^/g,'');
 }
 
 function checkAnswers(arr, input) {
@@ -2261,6 +2735,11 @@ function buildQuiz() {
     `;
     container.appendChild(div);
   });
+
+  // MathJax typeset (questions may include TeX)
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([container]).catch(() => {});
+  }
 }
 
 function checkQ(i) {
@@ -2295,6 +2774,11 @@ function checkQ(i) {
   }
   fb.style.display = 'block';
   updateScore();
+
+  // MathJax typeset (feedback may include TeX)
+  if (window.MathJax && MathJax.typesetPromise) {
+    MathJax.typesetPromise([fb]).catch(() => {});
+  }
 
   if (answered === quizData.length) showFinal();
 }
