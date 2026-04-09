@@ -14,7 +14,7 @@
   --border2: rgba(120,120,200,0.3);
   --text: #e8e8f0;
   --text2: #9898b0;
-  --text3: #6060780;
+  --text3: #606078;
   --blue: #4d9fff;
   --blue-dim: rgba(77,159,255,0.12);
   --teal: #3dd6c8;
@@ -214,7 +214,6 @@ body {
   border-radius: 8px;
   padding: 1.25rem 1.5rem;
   margin: 1rem 0;
-  font-family: 'IBM Plex Mono', monospace;
   font-size: 15px;
   color: var(--amber);
   text-align: center;
@@ -225,6 +224,12 @@ body {
 .formula-block.teal { color: var(--teal); border-color: rgba(61,214,200,0.3); background: var(--teal-dim); }
 .formula-block.green { color: var(--green); border-color: rgba(74,222,128,0.3); background: var(--green-dim); }
 .formula-block.red { color: var(--red); border-color: rgba(255,107,107,0.3); background: var(--red-dim); }
+
+/* MathJax tweaks (keep equations compact inside cards) */
+.formula-block .mjx-container { margin: 0 !important; }
+.formula-block mjx-container[display="true"] { margin: 0 !important; }
+.formula-block mjx-math { color: currentColor; }
+.mjx-chtml { font-size: 1em !important; }
 
 .formula-label {
   font-family: 'IBM Plex Mono', monospace;
@@ -241,6 +246,91 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 1rem;
   margin-bottom: 1.25rem;
+}
+
+/* Diagram split (svg + legend card) */
+.diagram-split {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.9rem;
+  align-items: start;
+}
+.legend-card {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.1rem 1.1rem;
+  max-width: 520px;
+  margin: 0 auto;
+}
+.legend-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text);
+  margin-bottom: 0.75rem;
+}
+.legend-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.05);
+  font-size: 13px;
+}
+.legend-row:last-child { border-bottom: none; }
+.legend-badge {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.legend-badge.si { background: rgba(61,214,200,0.16); border: 1px solid rgba(61,214,200,0.55); color: var(--text); }
+.legend-badge.donor { background: rgba(245,166,35,0.16); border: 1px solid rgba(245,166,35,0.65); color: var(--amber); }
+.legend-badge.acceptor { background: rgba(167,139,250,0.16); border: 1px solid rgba(167,139,250,0.65); color: var(--purple); }
+.legend-badge.hole { background: rgba(255,107,107,0.10); border: 2px dashed rgba(255,107,107,0.8); color: var(--red); }
+.legend-badge.e { background: rgba(77,159,255,0.22); border: 1px solid rgba(77,159,255,0.65); color: var(--blue); }
+.legend-text { color: var(--text2); }
+.legend-text strong { color: var(--text); }
+
+/* Mobile responsiveness */
+@media (max-width: 900px) {
+  .shell { flex-direction: column; }
+  .sidebar {
+    width: 100%;
+    min-height: auto;
+    height: auto;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 0.6rem 0;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+  .sidebar-logo, .nav-section { display: none; }
+  .nav-item {
+    flex: 0 0 auto;
+    padding: 0.6rem 1rem;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .nav-item.active { border-left-color: transparent; border-bottom-color: var(--blue); }
+  .main { max-width: 100%; padding: 1.5rem 1.25rem 4rem; }
+  .two-col { grid-template-columns: 1fr; }
+  .bias-grid { grid-template-columns: 1fr; }
+  .diagram-split { grid-template-columns: 1fr; }
 }
 
 /* Type card (N/P) */
@@ -444,7 +534,28 @@ body {
 }
 
 .section { animation: fadeUp 0.4s ease forwards; }
+
+/* Page footer */
+.page-footer {
+  text-align: center;
+  padding: 2rem 1rem 3rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  color: var(--text2);
+  letter-spacing: 0.06em;
+  border-top: 1px solid var(--border);
+  background: var(--bg);
+}
 </style>
+
+<!-- MathJax (TeX) -->
+<script>
+  window.MathJax = {
+    tex: { inlineMath: [['\\(','\\)']], displayMath: [['\\[','\\]']] },
+    options: { skipHtmlTags: ['script','noscript','style','textarea','pre','code'] }
+  };
+</script>
+<script defer src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
 </head>
 <body>
 
@@ -459,18 +570,21 @@ body {
 
   <div class="nav-section">İçindekiler</div>
 
-  <div class="nav-item active" onclick="scrollTo('s31')"><span class="nav-dot"></span>3.1 Intrinsic</div>
-  <div class="nav-item" onclick="scrollTo('s32')"><span class="nav-dot"></span>3.2 Doped</div>
-  <div class="nav-item" onclick="scrollTo('s33')"><span class="nav-dot"></span>3.3.1 Drift</div>
-  <div class="nav-item" onclick="scrollTo('s332')"><span class="nav-dot"></span>3.3.2 Diffusion</div>
-  <div class="nav-item" onclick="scrollTo('s333')"><span class="nav-dot"></span>3.3.3 Einstein</div>
-  <div class="nav-item" onclick="scrollTo('s334')"><span class="nav-dot"></span>3.3.4 σ ve ρ</div>
-  <div class="nav-item" onclick="scrollTo('s341')"><span class="nav-dot"></span>3.4.1 pn Yapısı</div>
-  <div class="nav-item" onclick="scrollTo('s342')"><span class="nav-dot"></span>3.4.2 Open Circuit</div>
-  <div class="nav-item" onclick="scrollTo('s343')"><span class="nav-dot"></span>3.4.3–4 Bias</div>
-  <div class="nav-item" onclick="scrollTo('s35')"><span class="nav-dot"></span>3.5 Diyot I-V</div>
-  <div class="nav-item" onclick="scrollTo('formulas')"><span class="nav-dot"></span>Formül Özeti</div>
-  <div class="nav-item" onclick="scrollTo('quiz')"><span class="nav-dot"></span>Quiz (40 Soru)</div>
+  <div class="nav-item active" onclick="navigateToSection('s31', this)"><span class="nav-dot"></span>3.1 Intrinsic</div>
+  <div class="nav-item" onclick="navigateToSection('s32', this)"><span class="nav-dot"></span>3.2 Doped</div>
+  <div class="nav-item" onclick="navigateToSection('s33', this)"><span class="nav-dot"></span>3.3.1 Drift</div>
+  <div class="nav-item" onclick="navigateToSection('s332', this)"><span class="nav-dot"></span>3.3.2 Diffusion</div>
+  <div class="nav-item" onclick="navigateToSection('s333', this)"><span class="nav-dot"></span>3.3.3 Einstein</div>
+  <div class="nav-item" onclick="navigateToSection('s334', this)"><span class="nav-dot"></span>3.3.4 σ ve ρ</div>
+  <div class="nav-item" onclick="navigateToSection('s341', this)"><span class="nav-dot"></span>3.4.1 pn Yapısı</div>
+  <div class="nav-item" onclick="navigateToSection('s342', this)"><span class="nav-dot"></span>3.4.2 Open Circuit</div>
+  <div class="nav-item" onclick="navigateToSection('s343', this)"><span class="nav-dot"></span>3.4.3–4 Bias</div>
+  <div class="nav-item" onclick="navigateToSection('s35', this)"><span class="nav-dot"></span>3.5 Diyot I-V</div>
+  <div class="nav-item" onclick="navigateToSection('formulas', this)"><span class="nav-dot"></span>Formül Özeti</div>
+  <div class="nav-item" onclick="navigateToSection('examples', this)"><span class="nav-dot"></span>Çözümlü Örnekler</div>
+  <div class="nav-item" onclick="navigateToSection('glossary', this)"><span class="nav-dot"></span>Terimler</div>
+  <div class="nav-item" onclick="navigateToSection('formula-table', this)"><span class="nav-dot"></span>Formül Tablosu</div>
+  <div class="nav-item" onclick="navigateToSection('quiz', this)"><span class="nav-dot"></span>Quiz (40 Soru)</div>
 </nav>
 
 <!-- MAIN -->
@@ -494,6 +608,12 @@ body {
       <p>İletkenliği, iletkenler (bakır) ile yalıtkanlar (cam) arasında kalan malzeme. Asıl gücü: iletkenliği <span class="hl-teal">kontrol edilebilir</span>.</p>
     </div>
 
+    <div class="card">
+      <div class="card-title">Sezgi: Neden “kontrol edilebilir”?</div>
+      <p style="font-size:13px;">Metalde serbest elektron sayısı zaten çok büyüktür; küçük bir değişim iletkenliği dramatik değiştirmez. Yarıiletkende ise serbest taşıyıcı sayısı <span class="hl-amber">çok küçüktür</span> ve sıcaklık/doping ile <span class="hl-teal">üstel ölçekte</span> değişebilir. Bu yüzden devre tasarımında ana “ayar düğmesi” yarıiletkendir.</p>
+      <p style="font-size:13px;margin-top:0.6rem;">Bu chapter’da temel fikir: <strong>taşıyıcı sayısı</strong> (n,p) ve <strong>taşıyıcı hareketi</strong> (μ, D) akımı belirler.</p>
+    </div>
+
     <div class="two-col">
       <div class="card">
         <div class="card-title">Silikon Atomu</div>
@@ -515,35 +635,66 @@ body {
     </div>
 
     <div class="diagram">
-      <svg width="100%" viewBox="0 0 600 140">
-        <text x="300" y="18" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">SICAKLIK ARTIŞI → İLETKENLİK ARTIŞI</text>
-        <!-- 0K -->
-        <rect x="30" y="35" width="160" height="80" rx="8" fill="rgba(77,159,255,0.08)" stroke="rgba(77,159,255,0.2)" stroke-width="1"/>
-        <text x="110" y="60" text-anchor="middle" fill="#4d9fff" font-size="12" font-family="IBM Plex Mono">0 Kelvin</text>
-        <text x="110" y="80" text-anchor="middle" fill="#9898b0" font-size="11">Bağlar sağlam</text>
-        <text x="110" y="98" text-anchor="middle" fill="#9898b0" font-size="11">σ = 0</text>
-        <!-- Arrow -->
-        <line x1="195" y1="75" x2="235" y2="75" stroke="#9898b0" stroke-width="1.5" marker-end="url(#arr)"/>
-        <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.5"/></marker></defs>
-        <!-- Room temp -->
-        <rect x="240" y="35" width="160" height="80" rx="8" fill="rgba(74,222,128,0.08)" stroke="rgba(74,222,128,0.2)" stroke-width="1"/>
-        <text x="320" y="60" text-anchor="middle" fill="#4ade80" font-size="12" font-family="IBM Plex Mono">300 Kelvin</text>
-        <text x="320" y="80" text-anchor="middle" fill="#9898b0" font-size="11">Bağ kırılır</text>
-        <text x="320" y="98" text-anchor="middle" fill="#9898b0" font-size="11">e⁻ + hole oluşur</text>
-        <!-- Result -->
-        <line x1="405" y1="75" x2="435" y2="75" stroke="#9898b0" stroke-width="1.5" marker-end="url(#arr)"/>
-        <rect x="440" y="50" width="120" height="50" rx="8" fill="rgba(245,166,35,0.1)" stroke="rgba(245,166,35,0.3)" stroke-width="1"/>
-        <text x="500" y="72" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">n = p = nᵢ</text>
-        <text x="500" y="90" text-anchor="middle" fill="#9898b0" font-size="10">σ > 0</text>
+      <svg width="100%" viewBox="0 0 860 220">
+        <defs>
+          <marker id="arr-temp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="430" y="22" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">SICAKLIK ARTIŞI → BAĞ KIRILMASI → TAŞIYICI ÜRETİMİ → σ ARTIŞI</text>
+
+        <rect x="70" y="48" width="720" height="120" rx="14" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.20)" stroke-width="1"/>
+
+        <rect x="95" y="66" width="230" height="84" rx="12" fill="rgba(77,159,255,0.12)" stroke="rgba(77,159,255,0.30)" stroke-width="1"/>
+        <text x="210" y="98" text-anchor="middle" fill="#4d9fff" font-size="13" font-family="IBM Plex Mono">0 K</text>
+        <text x="210" y="124" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">serbest taşıyıcı yok</text>
+
+        <line x1="325" y1="108" x2="375" y2="108" stroke="#9898b0" stroke-width="1.6" marker-end="url(#arr-temp)"/>
+
+        <rect x="380" y="66" width="230" height="84" rx="12" fill="rgba(74,222,128,0.10)" stroke="rgba(74,222,128,0.28)" stroke-width="1"/>
+        <text x="495" y="98" text-anchor="middle" fill="#4ade80" font-size="13" font-family="IBM Plex Mono">300 K</text>
+        <text x="495" y="124" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">e⁻ + hole üretilir</text>
+
+        <line x1="610" y1="108" x2="660" y2="108" stroke="#9898b0" stroke-width="1.6" marker-end="url(#arr-temp)"/>
+
+        <rect x="665" y="66" width="100" height="84" rx="12" fill="rgba(245,166,35,0.10)" stroke="rgba(245,166,35,0.30)" stroke-width="1"/>
+        <text x="715" y="104" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">σ &gt; 0</text>
       </svg>
     </div>
 
-    <div class="formula-block teal">n = p = nᵢ = 1.5 × 10¹⁰ cm⁻³  (300K)</div>
+    <div class="bias-grid">
+      <div class="bias-card open">
+        <h5>1. Başlangıç</h5>
+        <div class="row"><span class="k">T</span><span class="v">çok düşük</span></div>
+        <div class="row"><span class="k">Bağlar</span><span class="v">sağlam</span></div>
+        <div class="row"><span class="k">σ</span><span class="v">≈ 0</span></div>
+      </div>
+      <div class="bias-card open">
+        <h5>2. Üretim</h5>
+        <div class="row"><span class="k">Isıl enerji</span><span class="v">bağ kırar</span></div>
+        <div class="row"><span class="k">Çıkan</span><span class="v">e⁻ + hole</span></div>
+        <div class="row"><span class="k">n,p</span><span class="v">artar</span></div>
+      </div>
+      <div class="bias-card open">
+        <h5>3. Denge</h5>
+        <div class="row"><span class="k">Intrinsic</span><span class="v">n = p</span></div>
+        <div class="row"><span class="k">Değer</span><span class="v">n_i</span></div>
+        <div class="row"><span class="k">σ</span><span class="v">artmış</span></div>
+      </div>
+    </div>
+
+    <div class="formula-block teal">\[ n = p = n_i = 1.5 \times 10^{10}\ \text{cm}^{-3}\ \ (300\text{ K}) \]</div>
     <div class="formula-label">intrinsic carrier concentration — her zaman eşit</div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.1)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> Intrinsic Si’de \(n=2n_i\) olabilir mi (denge durumunda)?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> Termal dengede (intrinsic) taşıyıcılar sadece ısıl üretimden gelir ve simetriktir → <span class="hl-teal">\(n=p=n_i\)</span>. Dış etki yoksa \(n\neq p\) kalıcı olamaz (recombination/generation dengesi eşitler).</p>
+    </div>
 
     <div class="callout tip">
       <span class="callout-icon">→</span>
-      <span>Metallerden farkı: Sıcaklık arttıkça yarıiletken daha iyi iletir. Metalarde tam tersi olur.</span>
+      <span>Metallerden farkı: Sıcaklık arttıkça yarıiletken daha iyi iletir. Metallerde tam tersi olur.</span>
     </div>
   </div>
 
@@ -559,6 +710,12 @@ body {
     <div class="card">
       <div class="card-title">Doping nedir?</div>
       <p>Saf silikon'a az miktarda yabancı atom ekleyerek iletkenliği kontrol etme işlemi. Eklenen atoma <span class="hl-amber">dopant</span> denir.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Sezgi: Donor neden elektron “verir”?</div>
+      <p style="font-size:13px;">Si kafesinde her atom 4 bağ yapar. Donor (P, As) 5 valans elektronu getirir: 4’ü bağlara gider, 1’i zayıf bağlı kalır → oda sıcaklığında kolayca kopup <span class="hl-blue">serbest elektron</span> olur. Acceptor (B) ise 3 valanslıdır; bir bağ “eksik” kalır → bu eksik bağ <span class="hl-purple">hole</span> gibi davranır.</p>
+      <p style="font-size:13px;margin-top:0.6rem;">En kritik sonuç: \(np=n_i^2\) sabit olduğu için birini büyütmek diğerini küçültür → <strong>majority/minority</strong> ayrımı doğar.</p>
     </div>
 
     <div class="two-col">
@@ -582,7 +739,220 @@ body {
       </div>
     </div>
 
-    <div class="formula-block">n · p = nᵢ²</div>
+    <div class="two-col">
+      <div class="diagram">
+        <div class="diagram-split">
+          <svg width="100%" viewBox="0 0 520 360">
+          <text x="260" y="28" text-anchor="middle" fill="#9898b0" font-size="12" font-family="IBM Plex Mono">N-type yarıiletken kafes yapısı</text>
+
+          <!-- grid bonds -->
+          <g stroke="rgba(255,255,255,0.55)" stroke-width="2">
+            <line x1="120" y1="90" x2="260" y2="90"/>
+            <line x1="260" y1="90" x2="400" y2="90"/>
+            <line x1="120" y1="230" x2="260" y2="230"/>
+            <line x1="260" y1="230" x2="400" y2="230"/>
+            <line x1="120" y1="90" x2="120" y2="230"/>
+            <line x1="260" y1="90" x2="260" y2="230"/>
+            <line x1="400" y1="90" x2="400" y2="230"/>
+          </g>
+
+          <!-- Si atoms -->
+          <g>
+            <circle cx="120" cy="90" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="120" y="88" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="120" y="112" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="260" cy="90" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="260" y="88" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="260" y="112" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="400" cy="90" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="400" y="88" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="400" y="112" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="120" cy="230" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="120" y="228" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="120" y="252" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="400" cy="230" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="400" y="228" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="400" y="252" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="260" cy="230" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="260" y="228" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="260" y="252" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+          </g>
+
+          <!-- donor in the middle -->
+          <circle cx="260" cy="160" r="58" fill="rgba(245,166,35,0.22)" stroke="rgba(245,166,35,0.95)" stroke-width="3"/>
+          <text x="260" y="154" text-anchor="middle" fill="#f5a623" font-size="26" font-family="IBM Plex Mono">P</text>
+          <text x="260" y="182" text-anchor="middle" fill="#f5a623" font-size="18" font-family="IBM Plex Mono">+5</text>
+
+          <!-- free electron -->
+          <defs>
+            <marker id="arr-e" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.8"/>
+            </marker>
+          </defs>
+          <line x1="310" y1="142" x2="370" y2="118" stroke="#9898b0" stroke-width="2" marker-end="url(#arr-e)"/>
+          <circle cx="392" cy="108" r="20" fill="rgba(255,107,107,0.95)" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+          <text x="392" y="114" text-anchor="middle" fill="#0a0a0f" font-size="16" font-family="IBM Plex Mono">e⁻</text>
+
+          <!-- caption -->
+          <text x="260" y="330" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">Donor (P) fazladan elektron verir → n çoğunluk taşıyıcı</text>
+          </svg>
+
+          <div class="legend-card">
+            <div class="legend-title">N-type doping</div>
+            <div class="legend-row"><span class="legend-badge si">Si</span><span class="legend-text">Silikon — <strong>4</strong> valans e⁻</span></div>
+            <div class="legend-row"><span class="legend-badge donor">P</span><span class="legend-text">Fosfor (donor) — <strong>5</strong> valans e⁻</span></div>
+            <div class="legend-row"><span class="legend-badge e">e⁻</span><span class="legend-text">Serbest elektron — majority carrier</span></div>
+            <div class="legend-row"><span class="legend-badge hole">+</span><span class="legend-text">Hole — minority carrier</span></div>
+            <div style="margin-top:0.8rem;color:var(--text2);font-size:12px;line-height:1.6;">
+              4 bağ kurulur → 1 e⁻ zayıf bağlı kalır → <strong>kolayca serbestleşir</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="diagram">
+        <div class="diagram-split">
+          <svg width="100%" viewBox="0 0 520 360">
+          <text x="260" y="28" text-anchor="middle" fill="#9898b0" font-size="12" font-family="IBM Plex Mono">P-type yarıiletken kafes yapısı</text>
+
+          <!-- grid bonds -->
+          <g stroke="rgba(255,255,255,0.55)" stroke-width="2">
+            <line x1="120" y1="90" x2="260" y2="90"/>
+            <line x1="260" y1="90" x2="400" y2="90"/>
+            <line x1="120" y1="230" x2="260" y2="230"/>
+            <line x1="260" y1="230" x2="400" y2="230"/>
+            <line x1="120" y1="90" x2="120" y2="230"/>
+            <line x1="260" y1="90" x2="260" y2="230"/>
+            <line x1="400" y1="90" x2="400" y2="230"/>
+          </g>
+
+          <!-- Si atoms -->
+          <g>
+            <circle cx="120" cy="90" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="120" y="88" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="120" y="112" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="260" cy="90" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="260" y="88" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="260" y="112" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="400" cy="90" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="400" y="88" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="400" y="112" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="120" cy="230" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="120" y="228" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="120" y="252" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="400" cy="230" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="400" y="228" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="400" y="252" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+
+            <circle cx="260" cy="230" r="46" fill="rgba(61,214,200,0.20)" stroke="rgba(61,214,200,0.75)" stroke-width="2"/>
+            <text x="260" y="228" text-anchor="middle" fill="#e8e8f0" font-size="22" font-family="IBM Plex Mono">Si</text>
+            <text x="260" y="252" text-anchor="middle" fill="#3dd6c8" font-size="16" font-family="IBM Plex Mono">+4</text>
+          </g>
+
+          <!-- acceptor in the middle -->
+          <circle cx="260" cy="160" r="58" fill="rgba(167,139,250,0.18)" stroke="rgba(167,139,250,0.95)" stroke-width="3"/>
+          <text x="260" y="154" text-anchor="middle" fill="#a78bfa" font-size="26" font-family="IBM Plex Mono">B</text>
+          <text x="260" y="182" text-anchor="middle" fill="#a78bfa" font-size="18" font-family="IBM Plex Mono">+3</text>
+
+          <!-- hole -->
+          <defs>
+            <marker id="arr-h" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.8"/>
+            </marker>
+          </defs>
+          <line x1="310" y1="170" x2="370" y2="195" stroke="#9898b0" stroke-width="2" marker-end="url(#arr-h)"/>
+          <circle cx="392" cy="206" r="20" fill="none" stroke="rgba(74,222,128,0.95)" stroke-width="3"/>
+          <text x="392" y="212" text-anchor="middle" fill="#4ade80" font-size="16" font-family="IBM Plex Mono">+</text>
+
+          <!-- caption -->
+          <text x="260" y="330" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">Acceptor (B) elektron “eksiltir” → hole çoğunluk taşıyıcı</text>
+          </svg>
+
+          <div class="legend-card">
+            <div class="legend-title">P-type doping</div>
+            <div class="legend-row"><span class="legend-badge si">Si</span><span class="legend-text">Silikon — <strong>4</strong> valans e⁻</span></div>
+            <div class="legend-row"><span class="legend-badge acceptor">B</span><span class="legend-text">Bor (acceptor) — <strong>3</strong> valans e⁻</span></div>
+            <div class="legend-row"><span class="legend-badge hole">+</span><span class="legend-text">Hole (boşluk) — majority carrier</span></div>
+            <div class="legend-row"><span class="legend-badge e">e⁻</span><span class="legend-text">Elektron — minority carrier</span></div>
+            <div style="margin-top:0.8rem;color:var(--text2);font-size:12px;line-height:1.6;">
+              3 bağ kurulur → 1 bağ eksik kalır → <strong>hole oluşur</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 720 210">
+        <defs>
+          <marker id="arr-dop" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="360" y="22" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">DOPING: MAJORITY/MINORITY TAŞIYICILAR ve KÜTLE ETKİSİ (np = n_i^2)</text>
+
+        <!-- N-type panel -->
+        <rect x="40" y="40" width="310" height="150" rx="12" fill="rgba(77,159,255,0.07)" stroke="rgba(77,159,255,0.25)" stroke-width="1"/>
+        <text x="195" y="68" text-anchor="middle" fill="#4d9fff" font-size="13" font-family="IBM Plex Mono">N-type (Donor)</text>
+        <text x="70" y="92" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">majority</text>
+        <!-- electrons -->
+        <circle cx="105" cy="125" r="12" fill="#4d9fff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+        <text x="105" y="129" text-anchor="middle" fill="#fff" font-size="10" font-family="IBM Plex Mono">e⁻</text>
+        <circle cx="145" cy="125" r="12" fill="#4d9fff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+        <text x="145" y="129" text-anchor="middle" fill="#fff" font-size="10" font-family="IBM Plex Mono">e⁻</text>
+        <circle cx="185" cy="125" r="12" fill="#4d9fff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+        <text x="185" y="129" text-anchor="middle" fill="#fff" font-size="10" font-family="IBM Plex Mono">e⁻</text>
+        <circle cx="225" cy="125" r="12" fill="#4d9fff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+        <text x="225" y="129" text-anchor="middle" fill="#fff" font-size="10" font-family="IBM Plex Mono">e⁻</text>
+
+        <text x="70" y="160" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">minority</text>
+        <!-- holes (few) -->
+        <circle cx="120" cy="172" r="12" fill="none" stroke="rgba(167,139,250,0.8)" stroke-width="1.6"/>
+        <text x="120" y="177" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">+</text>
+
+        <text x="250" y="102" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">n ↑</text>
+        <text x="250" y="120" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">p ↓</text>
+
+        <!-- P-type panel -->
+        <rect x="370" y="40" width="310" height="150" rx="12" fill="rgba(167,139,250,0.07)" stroke="rgba(167,139,250,0.25)" stroke-width="1"/>
+        <text x="525" y="68" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">P-type (Acceptor)</text>
+        <text x="400" y="92" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">majority</text>
+        <!-- holes -->
+        <circle cx="435" cy="125" r="12" fill="none" stroke="rgba(167,139,250,0.95)" stroke-width="1.8"/>
+        <text x="435" y="130" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">+</text>
+        <circle cx="475" cy="125" r="12" fill="none" stroke="rgba(167,139,250,0.95)" stroke-width="1.8"/>
+        <text x="475" y="130" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">+</text>
+        <circle cx="515" cy="125" r="12" fill="none" stroke="rgba(167,139,250,0.95)" stroke-width="1.8"/>
+        <text x="515" y="130" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">+</text>
+        <circle cx="555" cy="125" r="12" fill="none" stroke="rgba(167,139,250,0.95)" stroke-width="1.8"/>
+        <text x="555" y="130" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">+</text>
+
+        <text x="400" y="160" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">minority</text>
+        <!-- electrons (few) -->
+        <circle cx="450" cy="172" r="12" fill="#4d9fff" stroke="rgba(0,0,0,0.2)" stroke-width="0.5"/>
+        <text x="450" y="176" text-anchor="middle" fill="#fff" font-size="10" font-family="IBM Plex Mono">e⁻</text>
+
+        <text x="610" y="102" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">p ↑</text>
+        <text x="610" y="120" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">n ↓</text>
+
+        <!-- NP constant callout -->
+        <line x1="350" y1="115" x2="370" y2="115" stroke="#9898b0" stroke-width="1.4" marker-end="url(#arr-dop)"/>
+        <rect x="312" y="86" width="96" height="52" rx="10" fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.30)" stroke-width="1"/>
+        <text x="360" y="108" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">np = n_i^2</text>
+        <text x="360" y="126" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">sabit</text>
+      </svg>
+    </div>
+
+    <div class="formula-block">\[ n \cdot p = n_i^2 \]</div>
     <div class="formula-label">kütle etkisi yasası — çarpım her zaman sabit</div>
 
     <div class="callout info">
@@ -592,8 +962,14 @@ body {
 
     <div class="card">
       <div class="card-title">Örnek Hesap</div>
-      <p style="font-size:13px;">N-type, n = 10¹⁶ cm⁻³ ise <span class="hl-amber">p = nᵢ²/n = 2.25×10²⁰ / 10¹⁶ = <strong class="hl-teal">2.25×10⁴ cm⁻³</strong></span></p>
-      <p style="font-size:13px;margin-top:0.5rem;">Elektron, hole'dan 10¹² kat fazla — minority carrier neredeyse yok!</p>
+      <p style="font-size:13px;">N-type, \(n = 10^{16}\ \text{cm}^{-3}\) ise <span class="hl-amber">\(p = n_i^2/n = (2.25\times10^{20}) / 10^{16} =\)</span> <strong class="hl-teal">\(2.25\times10^{4}\ \text{cm}^{-3}\)</strong></p>
+      <p style="font-size:13px;margin-top:0.5rem;">Elektron, hole'dan \(10^{12}\) kat fazla — minority carrier neredeyse yok!</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.2)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(n=10^{15}\ \text{cm}^{-3}\) olan N-type Si’de \(p\) kaçtır? (\(n_i=1.5\times10^{10}\))</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(p=n_i^2/n=(2.25\times10^{20})/10^{15}=2.25\times10^5\ \text{cm}^{-3}\). Minority carrier aşırı küçülür → ters polarmada akım küçük kalır.</p>
     </div>
   </div>
 
@@ -611,36 +987,59 @@ body {
       <p>Elektrik alan <span class="hl-amber">E</span> uygulanınca taşıyıcıların yönlü hareketi. Hole'lar E yönünde, elektronlar E'ye ters hareket eder. İkisi de aynı yönde akıma katkıda bulunur.</p>
     </div>
 
+    <div class="card">
+      <div class="card-title">İşaret sezgisi: Neden elektron ters gider ama akım aynı olur?</div>
+      <p style="font-size:13px;">Akım yönü <span class="hl-amber">pozitif yük akışı</span> olarak tanımlanır. Elektronlar E’ye ters hızlanır, ama negatif yük taşıdığı için “akıma katkısı” ters işaretle çarpılır ve sonuçta \(J_n=q n \mu_n E\) gibi aynı E yönünde görünür. Bu yüzden formüllerde işaretleri ezberlemek yerine <strong>yük işaretini</strong> düşünmek daha güvenlidir.</p>
+    </div>
+
     <div class="diagram">
-      <svg width="100%" viewBox="0 0 600 120">
-        <defs><marker id="a2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5"/></marker></defs>
-        <!-- E field -->
-        <text x="300" y="18" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">ELEKTRİK ALAN ALTINDA TAŞIYICI HAREKETİ</text>
-        <line x1="180" y1="30" x2="400" y2="30" stroke="#f5a623" stroke-width="2" marker-end="url(#arr)"/>
-        <text x="290" y="24" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">E</text>
-        <!-- Silikon bar -->
-        <rect x="80" y="45" width="440" height="55" rx="6" fill="rgba(255,255,255,0.03)" stroke="rgba(120,120,200,0.2)" stroke-width="1"/>
-        <!-- Holes right -->
-        <circle cx="140" cy="72" r="10" fill="none" stroke="#ff6b6b" stroke-width="1.5"/>
-        <text x="140" y="77" text-anchor="middle" fill="#ff6b6b" font-size="13">+</text>
-        <line x1="152" y1="72" x2="190" y2="72" stroke="#ff6b6b" stroke-width="1.5" marker-end="url(#arr)"/>
-        <circle cx="260" cy="72" r="10" fill="none" stroke="#ff6b6b" stroke-width="1.5"/>
-        <text x="260" y="77" text-anchor="middle" fill="#ff6b6b" font-size="13">+</text>
-        <line x1="272" y1="72" x2="310" y2="72" stroke="#ff6b6b" stroke-width="1.5" marker-end="url(#arr)"/>
-        <!-- Electrons left -->
-        <circle cx="420" cy="72" r="10" fill="#4d9fff" stroke="#185FA5" stroke-width="1"/>
-        <text x="420" y="76" text-anchor="middle" fill="white" font-size="10">e⁻</text>
-        <line x1="408" y1="72" x2="370" y2="72" stroke="#4d9fff" stroke-width="1.5" marker-end="url(#arr)"/>
-        <circle cx="510" cy="72" r="10" fill="#4d9fff" stroke="#185FA5" stroke-width="1"/>
-        <text x="510" y="76" text-anchor="middle" fill="white" font-size="10">e⁻</text>
-        <line x1="498" y1="72" x2="460" y2="72" stroke="#4d9fff" stroke-width="1.5" marker-end="url(#arr)"/>
-        <!-- Labels -->
-        <text x="165" y="110" text-anchor="middle" fill="#ff6b6b" font-size="11" font-family="IBM Plex Mono">E yönünde →</text>
-        <text x="450" y="110" text-anchor="middle" fill="#4d9fff" font-size="11" font-family="IBM Plex Mono">← E'ye ters</text>
+      <svg width="100%" viewBox="0 0 860 210">
+        <defs>
+          <marker id="arr-drift" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="430" y="22" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">DRIFT: Elektrik alan vektörü taşıyıcıları sürükler</text>
+
+        <rect x="70" y="48" width="720" height="120" rx="14" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.20)" stroke-width="1"/>
+        <text x="430" y="76" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">E →</text>
+        <line x1="350" y1="84" x2="510" y2="84" stroke="#f5a623" stroke-width="2" marker-end="url(#arr-drift)"/>
+
+        <!-- carriers -->
+        <circle cx="250" cy="125" r="16" fill="none" stroke="rgba(167,139,250,0.95)" stroke-width="3"/>
+        <text x="250" y="131" text-anchor="middle" fill="#a78bfa" font-size="14" font-family="IBM Plex Mono">+</text>
+        <line x1="270" y1="125" x2="330" y2="125" stroke="rgba(167,139,250,0.85)" stroke-width="2" marker-end="url(#arr-drift)"/>
+        <text x="300" y="150" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">hole E yönünde</text>
+
+        <circle cx="610" cy="125" r="16" fill="rgba(77,159,255,0.95)" stroke="rgba(0,0,0,0.2)" stroke-width="1"/>
+        <text x="610" y="130" text-anchor="middle" fill="#0a0a0f" font-size="12" font-family="IBM Plex Mono">e⁻</text>
+        <line x1="590" y1="125" x2="530" y2="125" stroke="rgba(77,159,255,0.85)" stroke-width="2" marker-end="url(#arr-drift)"/>
+        <text x="570" y="150" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">elektron E’ye ters</text>
       </svg>
     </div>
 
-    <div class="formula-block blue">v_p = μ_p · E &nbsp;&nbsp;&nbsp; v_n = −μ_n · E</div>
+    <div class="bias-grid">
+      <div class="bias-card open">
+        <h5>1. Alan</h5>
+        <div class="row"><span class="k">Girdi</span><span class="v">E</span></div>
+        <div class="row"><span class="k">Birim</span><span class="v">V/cm</span></div>
+        <div class="row"><span class="k">Etki</span><span class="v">sürükler</span></div>
+      </div>
+      <div class="bias-card open">
+        <h5>2. Hız</h5>
+        <div class="row"><span class="k">Hole</span><span class="v">\(v_p=\mu_pE\)</span></div>
+        <div class="row"><span class="k">Elektron</span><span class="v">\(v_n=-\mu_nE\)</span></div>
+        <div class="row"><span class="k">Not</span><span class="v">μₙ &gt; μₚ</span></div>
+      </div>
+      <div class="bias-card open">
+        <h5>3. Akım</h5>
+        <div class="row"><span class="k">Toplam</span><span class="v">\(J=q(p\mu_p+n\mu_n)E\)</span></div>
+        <div class="row"><span class="k">Birim</span><span class="v">A/cm²</span></div>
+        <div class="row"><span class="k">Özet</span><span class="v">\(J=\sigma E\)</span></div>
+      </div>
+    </div>
+
+    <div class="formula-block blue">\[ v_p = \mu_p E \qquad v_n = -\mu_n E \]</div>
     <div class="formula-label">drift hızı — μ = mobility (taşıyıcının alana duyarlılığı)</div>
 
     <table class="data-table">
@@ -649,14 +1048,20 @@ body {
       <tr><td>Hole (μₚ)</td><td class="mono">480 cm²/Vs</td><td style="color:var(--text2);">—</td></tr>
     </table>
 
-    <div class="formula-block">J_p = qpμ_pE &nbsp;&nbsp; J_n = qnμ_nE</div>
-    <div class="formula-block green">J_drift = q(pμ_p + nμ_n)E</div>
+    <div class="formula-block">\[ J_p = q p \mu_p E \qquad J_n = q n \mu_n E \]</div>
+    <div class="formula-block green">\[ J_{\text{drift}} = q(p\mu_p + n\mu_n)E \]</div>
     <div class="formula-label">toplam drift akım yoğunluğu [A/cm²]</div>
 
     <div class="card">
       <div class="card-title">Örnek: N-type Drift</div>
       <p style="font-size:13px;">N_D = 10¹⁷, E = 0.1 V/cm → J ≈ qnμ_nE</p>
-      <div class="formula-block blue" style="font-size:13px;margin:0.75rem 0;">J = (1.6×10⁻¹⁹)(10¹⁷)(1350)(0.1) = <strong>2.16 A/cm²</strong></div>
+      <div class="formula-block blue" style="font-size:13px;margin:0.75rem 0;">\[ J = (1.6\times 10^{-19})(10^{17})(1350)(0.1) \approx \mathbf{2.16}\ \text{A/cm}^2 \]</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.3.1)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(E\) iki katına çıkarsa drift akımı ne olur?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(J_{\text{drift}}\propto E\). Taşıyıcı konsantrasyonları ve μ sabitse <span class="hl-teal">J iki katına çıkar</span>. (Lineer ilişki, bu yüzden “ohmik” bölgede \(J=\sigma E\) denir.)</p>
     </div>
   </div>
 
@@ -674,15 +1079,53 @@ body {
       <p>Elektrik alan <strong>gerekmez</strong>. Konsantrasyon farkı taşıyıcıları yoğun bölgeden seyrek bölgeye iter. Parfüm odaya yayılması gibi — kimse itmez, konsantrasyon farkı yönlendirir.</p>
     </div>
 
-    <div class="formula-block red">J_p = −qD_p · dp/dx</div>
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 720 230">
+        <defs>
+          <marker id="arr-diff" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="360" y="20" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">DIFFUSION: KONSANTRASYON GRADYANI → AKIM (E GEREKMEZ)</text>
+
+        <!-- Plot area -->
+        <rect x="60" y="45" width="600" height="140" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.18)" stroke-width="1"/>
+        <!-- axes -->
+        <line x1="100" y1="165" x2="640" y2="165" stroke="#9898b0" stroke-width="1" marker-end="url(#arr-diff)"/>
+        <line x1="120" y1="175" x2="120" y2="65" stroke="#9898b0" stroke-width="1" marker-end="url(#arr-diff)"/>
+        <text x="650" y="169" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">x</text>
+        <text x="110" y="63" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">p(x)</text>
+
+        <!-- exponential-like decay curve -->
+        <path d="M120 78 C 200 90, 250 105, 300 120 C 380 145, 470 155, 640 160" fill="none" stroke="rgba(167,139,250,0.9)" stroke-width="2.5"/>
+        <text x="205" y="88" fill="#a78bfa" font-size="10" font-family="IBM Plex Mono">yoğun</text>
+        <text x="610" y="154" fill="#a78bfa" font-size="10" font-family="IBM Plex Mono">seyrek</text>
+
+        <!-- gradient arrow -->
+        <line x1="260" y1="112" x2="220" y2="98" stroke="#ff6b6b" stroke-width="2" marker-end="url(#arr-diff)"/>
+        <text x="270" y="108" fill="#ff6b6b" font-size="10" font-family="IBM Plex Mono">dp/dx &lt; 0</text>
+
+        <!-- current direction -->
+        <rect x="60" y="195" width="600" height="28" rx="10" fill="rgba(245,166,35,0.06)" stroke="rgba(245,166,35,0.22)" stroke-width="1"/>
+        <text x="360" y="214" text-anchor="middle" fill="#f5a623" font-size="10" font-family="IBM Plex Mono">hole diffusion: p yüksekten düşüğe gider → \(J_p=-qD_p\,dp/dx\)</text>
+      </svg>
+    </div>
+
+    <div class="formula-block red">\[ J_p = -qD_p\,\frac{dp}{dx} \]</div>
     <div class="formula-label">hole diffusion — eksi işareti: yoğundan seyreke gidiş</div>
 
-    <div class="formula-block blue">J_n = +qD_n · dn/dx</div>
+    <div class="formula-block blue">\[ J_n = +qD_n\,\frac{dn}{dx} \]</div>
     <div class="formula-label">elektron diffusion — artı: negatif yük ters yönde akıma katkı</div>
 
     <div class="callout warn">
       <span class="callout-icon">!</span>
       <span>Hole'da eksi, elektronda artı olmasının sebebi yük işareti farkıdır. Hole + yük, elektron − yük taşır.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.3.2)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> p(x) sağa doğru azalıyorsa \(dp/dx&lt;0\). Bu durumda \(J_p\) işareti nedir?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(J_p=-qD_p\,dp/dx\). \(dp/dx&lt;0\) olduğundan eksi ile çarpılınca <span class="hl-teal">\(J_p&gt;0\)</span> çıkar (pozitif yönde akım).</p>
     </div>
 
     <table class="data-table">
@@ -693,10 +1136,10 @@ body {
 
     <div class="card">
       <div class="card-title">Example 3.4 — Diffusion Hesabı</div>
-      <p style="font-size:13px;">p(x) = p₀e^(−x/Lₚ), p₀ = 10¹⁶, Lₚ = 1μm = 10⁻⁴ cm, A = 100μm²</p>
-      <p style="font-size:13px;margin-top:0.5rem;"><strong>dp/dx|ₓ₌₀ = −p₀/Lₚ</strong> → Jₚ = qDₚp₀/Lₚ</p>
-      <div class="formula-block amber" style="font-size:13px;margin:0.75rem 0;">J_p = (1.6×10⁻¹⁹ × 12 × 10¹⁶) / 10⁻⁴ = <strong>192 A/cm²</strong></div>
-      <p style="font-size:13px;">Iₚ = Jₚ × A = 192 × 10⁻⁶ = <strong class="hl-teal">0.192 mA</strong></p>
+      <p style="font-size:13px;">\(p(x)=p_0e^{-x/L_p}\), \(p_0=10^{16}\), \(L_p=1\ \mu\text{m}=10^{-4}\ \text{cm}\), \(A=100\ \mu\text{m}^2\)</p>
+      <p style="font-size:13px;margin-top:0.5rem;"><strong>\(\left.\frac{dp}{dx}\right|_{x=0}=-\frac{p_0}{L_p}\)</strong> → \(J_p = qD_p\frac{p_0}{L_p}\)</p>
+      <div class="formula-block amber" style="font-size:13px;margin:0.75rem 0;">\[ J_p = \frac{(1.6\times 10^{-19})(12)(10^{16})}{10^{-4}} \approx \mathbf{192}\ \text{A/cm}^2 \]</div>
+      <p style="font-size:13px;">\(I_p = J_pA = 192 \times 10^{-6} =\) <strong class="hl-teal">0.192 mA</strong></p>
     </div>
   </div>
 
@@ -714,12 +1157,56 @@ body {
       <p>Diffusion sabiti D ve mobility μ birbirinden bağımsız görünür, ama ikisi de aynı kaynaktan gelir: <span class="hl-teal">taşıyıcıların ısıl hareketi</span>. Bu yüzden aralarında sabit bir oran vardır.</p>
     </div>
 
-    <div class="formula-block teal">D_n/μ_n = D_p/μ_p = V_T = 25.9 mV  (300K)</div>
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 720 200">
+        <defs>
+          <marker id="arr-ein" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="360" y="20" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">EINSTEIN: \(D = \mu V_T\) (300K'de \(V_T \approx 25.9\) mV)</text>
+
+        <rect x="60" y="48" width="600" height="120" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.18)" stroke-width="1"/>
+
+        <!-- VT gauge -->
+        <rect x="90" y="78" width="170" height="60" rx="12" fill="rgba(61,214,200,0.10)" stroke="rgba(61,214,200,0.26)" stroke-width="1"/>
+        <text x="175" y="103" text-anchor="middle" fill="#3dd6c8" font-size="12" font-family="IBM Plex Mono">Termal voltaj</text>
+        <text x="175" y="124" text-anchor="middle" fill="#3dd6c8" font-size="13" font-family="IBM Plex Mono">\(V_T=kT/q\)</text>
+
+        <!-- arrow -->
+        <line x1="270" y1="108" x2="315" y2="108" stroke="#9898b0" stroke-width="1.6" marker-end="url(#arr-ein)"/>
+
+        <!-- mobility -->
+        <rect x="320" y="78" width="170" height="60" rx="12" fill="rgba(77,159,255,0.10)" stroke="rgba(77,159,255,0.26)" stroke-width="1"/>
+        <text x="405" y="103" text-anchor="middle" fill="#4d9fff" font-size="12" font-family="IBM Plex Mono">Mobility</text>
+        <text x="405" y="124" text-anchor="middle" fill="#4d9fff" font-size="13" font-family="IBM Plex Mono">\(\mu\)</text>
+
+        <!-- arrow -->
+        <line x1="500" y1="108" x2="545" y2="108" stroke="#9898b0" stroke-width="1.6" marker-end="url(#arr-ein)"/>
+
+        <!-- diffusion -->
+        <rect x="550" y="78" width="80" height="60" rx="12" fill="rgba(245,166,35,0.10)" stroke="rgba(245,166,35,0.26)" stroke-width="1"/>
+        <text x="590" y="106" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">D</text>
+        <text x="590" y="125" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">cm²/s</text>
+
+        <!-- formula chip -->
+        <rect x="235" y="150" width="250" height="30" rx="10" fill="rgba(74,222,128,0.07)" stroke="rgba(74,222,128,0.22)" stroke-width="1"/>
+        <text x="360" y="170" text-anchor="middle" fill="#4ade80" font-size="12" font-family="IBM Plex Mono">\(D=\mu V_T\) → \(D\) hızlı hesap</text>
+      </svg>
+    </div>
+
+    <div class="formula-block teal">\[ \frac{D_n}{\mu_n}=\frac{D_p}{\mu_p}=V_T=25.9\ \text{mV}\ \ (300\text{ K}) \]</div>
     <div class="formula-label">Einstein İlişkisi — V_T = termal voltaj</div>
 
     <div class="callout tip">
       <span class="callout-icon">→</span>
       <span>Sınavda μ verilip D sorulursa: D = μ × V_T = μ × 0.0259</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.3.3)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(\mu_n=1350\ \text{cm}^2/\text{Vs}\) ise \(D_n\) kaçtır? (300K)</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(D=\mu V_T \approx 1350\times0.0259 \approx 35.0\ \text{cm}^2/\text{s}\). (Tablodaki değerle tutarlı.)</p>
     </div>
   </div>
 
@@ -732,16 +1219,51 @@ body {
       <h3>Conductivity (σ) ve Resistivity (ρ)</h3>
     </div>
 
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 720 210">
+        <defs>
+          <marker id="arr-sig" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="360" y="20" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">İLETKENLİK MANTIĞI: taşıyıcı sayısı + hareket kabiliyeti → σ; tersi → ρ</text>
+
+        <!-- pipeline -->
+        <rect x="55" y="52" width="190" height="95" rx="12" fill="rgba(245,166,35,0.08)" stroke="rgba(245,166,35,0.26)" stroke-width="1"/>
+        <text x="150" y="78" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">Taşıyıcı</text>
+        <text x="150" y="102" text-anchor="middle" fill="#f5a623" font-size="11" font-family="IBM Plex Mono">n ve p</text>
+        <text x="150" y="125" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">doping ↑ → n/p ↑</text>
+
+        <line x1="250" y1="100" x2="300" y2="100" stroke="#9898b0" stroke-width="1.6" marker-end="url(#arr-sig)"/>
+
+        <rect x="305" y="52" width="190" height="95" rx="12" fill="rgba(77,159,255,0.08)" stroke="rgba(77,159,255,0.26)" stroke-width="1"/>
+        <text x="400" y="78" text-anchor="middle" fill="#4d9fff" font-size="12" font-family="IBM Plex Mono">Mobility</text>
+        <text x="400" y="102" text-anchor="middle" fill="#4d9fff" font-size="11" font-family="IBM Plex Mono">μₙ, μₚ</text>
+        <text x="400" y="125" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">doping ↑ → μ biraz ↓</text>
+
+        <line x1="500" y1="100" x2="550" y2="100" stroke="#9898b0" stroke-width="1.6" marker-end="url(#arr-sig)"/>
+
+        <rect x="555" y="52" width="110" height="95" rx="12" fill="rgba(61,214,200,0.10)" stroke="rgba(61,214,200,0.26)" stroke-width="1"/>
+        <text x="610" y="80" text-anchor="middle" fill="#3dd6c8" font-size="12" font-family="IBM Plex Mono">σ</text>
+        <text x="610" y="105" text-anchor="middle" fill="#3dd6c8" font-size="11" font-family="IBM Plex Mono">\(q(p\mu_p+n\mu_n)\)</text>
+        <text x="610" y="128" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">S/cm</text>
+
+        <!-- inverse -->
+        <rect x="210" y="160" width="300" height="34" rx="10" fill="rgba(255,107,107,0.08)" stroke="rgba(255,107,107,0.22)" stroke-width="1"/>
+        <text x="360" y="182" text-anchor="middle" fill="#ff6b6b" font-size="12" font-family="IBM Plex Mono">\( \rho = 1/\sigma \)  (σ ↑ → ρ ↓)</text>
+      </svg>
+    </div>
+
     <div class="two-col">
       <div class="card">
         <div class="card-title">Conductivity (σ)</div>
         <p style="font-size:13px;">Maddenin akımı ne kadar iyi ilettiği. Yüksekse iyi iletken.</p>
-        <div class="formula-block teal" style="margin:0.75rem 0;font-size:13px;">σ = q(pμ_p + nμ_n)</div>
+        <div class="formula-block teal" style="margin:0.75rem 0;font-size:13px;">\[ \sigma = q(p\mu_p + n\mu_n) \]</div>
       </div>
       <div class="card">
         <div class="card-title">Resistivity (ρ)</div>
         <p style="font-size:13px;">Conductivity'nin tersi. Yüksekse kötü iletken (yalıtkan gibi).</p>
-        <div class="formula-block red" style="margin:0.75rem 0;font-size:13px;">ρ = 1/σ = 1/[q(pμ_p + nμ_n)]</div>
+        <div class="formula-block red" style="margin:0.75rem 0;font-size:13px;">\[ \rho=\frac{1}{\sigma}=\frac{1}{q(p\mu_p+n\mu_n)} \]</div>
       </div>
     </div>
 
@@ -756,6 +1278,12 @@ body {
     <div class="callout info">
       <span class="callout-icon">i</span>
       <span>Doping resistivity'yi ~150.000 kat düşürür! Ayrıca doping, kafes bozulduğu için mobility'yi de biraz azaltır.</span>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.3.4)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(\sigma\) iki katına çıkarsa \(\rho\) ne olur?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(\rho=1/\sigma\) → <span class="hl-teal">\(\rho\) yarıya iner</span>. (Ters orantı; bu tip sorular hızlı puandır.)</p>
     </div>
   </div>
 
@@ -774,17 +1302,18 @@ body {
     </div>
 
     <div class="diagram">
-      <svg width="100%" viewBox="0 0 580 80">
-        <rect x="60" y="20" width="200" height="50" rx="6" fill="rgba(77,159,255,0.12)" stroke="rgba(77,159,255,0.3)" stroke-width="1"/>
-        <text x="160" y="50" text-anchor="middle" fill="#4d9fff" font-size="14" font-family="IBM Plex Mono">P-type</text>
-        <rect x="260" y="20" width="200" height="50" rx="6" fill="rgba(120,120,200,0.08)" stroke="rgba(120,120,200,0.2)" stroke-width="1"/>
-        <text x="360" y="50" text-anchor="middle" fill="#9898b0" font-size="14" font-family="IBM Plex Mono">N-type</text>
-        <text x="20" y="50" text-anchor="middle" fill="#4ade80" font-size="12" font-family="IBM Plex Mono">A</text>
-        <text x="500" y="50" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">K</text>
-        <line x1="30" y1="45" x2="58" y2="45" stroke="#9898b0" stroke-width="1.5"/>
-        <line x1="460" y1="45" x2="488" y2="45" stroke="#9898b0" stroke-width="1.5"/>
-        <text x="160" y="15" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">ANODE</text>
-        <text x="360" y="15" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">CATHODE</text>
+      <svg width="100%" viewBox="0 0 860 200">
+        <text x="430" y="22" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">pn JUNCTION: P ve N tipi yan yana (A: anode, K: cathode)</text>
+        <rect x="70" y="48" width="720" height="120" rx="14" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.20)" stroke-width="1"/>
+
+        <rect x="95" y="66" width="330" height="84" rx="12" fill="rgba(61,214,200,0.14)" stroke="rgba(61,214,200,0.35)" stroke-width="1"/>
+        <text x="260" y="104" text-anchor="middle" fill="#3dd6c8" font-size="14" font-family="IBM Plex Mono">P-type (Anode)</text>
+
+        <rect x="435" y="66" width="330" height="84" rx="12" fill="rgba(77,159,255,0.14)" stroke="rgba(77,159,255,0.35)" stroke-width="1"/>
+        <text x="600" y="104" text-anchor="middle" fill="#4d9fff" font-size="14" font-family="IBM Plex Mono">N-type (Cathode)</text>
+
+        <text x="95" y="186" text-anchor="start" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">A</text>
+        <text x="765" y="186" text-anchor="end" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">K</text>
       </svg>
     </div>
   </div>
@@ -825,22 +1354,141 @@ body {
       </div>
     </div>
 
-    <div class="formula-block amber">V₀ = V_T · ln(N_A · N_D / nᵢ²)</div>
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 860 260">
+        <defs>
+          <marker id="arr-pn" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <text x="430" y="22" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">pn JUNCTION (OPEN CIRCUIT): diffusion → depletion → denge</text>
+
+        <!-- main bar -->
+        <rect x="70" y="48" width="720" height="120" rx="14" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.20)" stroke-width="1"/>
+
+        <!-- P side -->
+        <rect x="90" y="66" width="270" height="84" rx="12" fill="rgba(61,214,200,0.14)" stroke="rgba(61,214,200,0.35)" stroke-width="1"/>
+        <text x="225" y="98" text-anchor="middle" fill="#3dd6c8" font-size="14" font-family="IBM Plex Mono">P-type</text>
+        <text x="225" y="122" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">majority: hole</text>
+
+        <!-- depletion -->
+        <rect x="360" y="66" width="160" height="84" rx="12" fill="rgba(245,166,35,0.10)" stroke="rgba(245,166,35,0.35)" stroke-width="1" stroke-dasharray="6 5"/>
+        <text x="440" y="104" text-anchor="middle" fill="#f5a623" font-size="12" font-family="IBM Plex Mono">depletion</text>
+        <text x="440" y="124" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">region</text>
+
+        <!-- N side -->
+        <rect x="520" y="66" width="270" height="84" rx="12" fill="rgba(77,159,255,0.14)" stroke="rgba(77,159,255,0.35)" stroke-width="1"/>
+        <text x="655" y="98" text-anchor="middle" fill="#4d9fff" font-size="14" font-family="IBM Plex Mono">N-type</text>
+        <text x="655" y="122" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">majority: electron</text>
+
+        <!-- anode/cathode -->
+        <text x="120" y="186" text-anchor="start" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">Anode</text>
+        <text x="760" y="186" text-anchor="end" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">Cathode</text>
+
+        <!-- bound charges -->
+        <text x="350" y="106" text-anchor="end" fill="#ff6b6b" font-size="16" font-family="IBM Plex Mono">− − −</text>
+        <text x="530" y="106" text-anchor="start" fill="#4ade80" font-size="16" font-family="IBM Plex Mono">+ + +</text>
+
+        <!-- E0 arrow -->
+        <line x1="520" y1="156" x2="360" y2="156" stroke="#f5a623" stroke-width="2" marker-end="url(#arr-pn)"/>
+        <text x="440" y="152" text-anchor="middle" fill="#f5a623" font-size="11" font-family="IBM Plex Mono">E₀</text>
+      </svg>
+    </div>
+
+    <div class="bias-grid">
+      <div class="bias-card open">
+        <h5>1. Diffusion</h5>
+        <div class="row"><span class="k">Hole</span><span class="v">→ N tarafına</span></div>
+        <div class="row"><span class="k">Elektron</span><span class="v">→ P tarafına</span></div>
+        <div class="row"><span class="k">Sebep</span><span class="v">konsantrasyon farkı</span></div>
+      </div>
+      <div class="bias-card open">
+        <h5>2. Depletion</h5>
+        <div class="row"><span class="k">Taşıyıcı</span><span class="v">azalır</span></div>
+        <div class="row"><span class="k">Bound charge</span><span class="v">kalır</span></div>
+        <div class="row"><span class="k">Sonuç</span><span class="v">E₀ oluşur</span></div>
+      </div>
+      <div class="bias-card open">
+        <h5>3. Denge</h5>
+        <div class="row"><span class="k">E₀</span><span class="v">diffusion’ı engeller</span></div>
+        <div class="row"><span class="k">Net akım</span><span class="v">≈ 0</span></div>
+        <div class="row"><span class="k">Bariyer</span><span class="v">V₀ (~0.7V)</span></div>
+      </div>
+    </div>
+
+    <div class="formula-block amber">\[ V_0 = V_T \ln\!\left(\frac{N_A N_D}{n_i^2}\right) \]</div>
     <div class="formula-label">built-in voltage — tipik değer: 0.6–0.9V (silikon, 300K)</div>
 
-    <div class="formula-block">x_n / x_p = N_A / N_D</div>
+    <div class="formula-block">\[ \frac{x_n}{x_p} = \frac{N_A}{N_D} \]</div>
     <div class="formula-label">depletion asimetrisi — az doplanan taraf daha geniş</div>
 
-    <div class="formula-block blue">W = √[ (2εₛ/q) · (1/N_A + 1/N_D) · V₀ ]</div>
+    <div class="formula-block blue">\[ W=\sqrt{\frac{2\varepsilon_s}{q}\left(\frac{1}{N_A}+\frac{1}{N_D}\right)V_0} \]</div>
     <div class="formula-label">toplam depletion genişliği</div>
+
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 720 190">
+        <defs>
+          <marker id="arr4" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+
+        <text x="360" y="20" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">DEPLETION REGION (OPEN CIRCUIT) — bound charge + bariyer</text>
+
+        <!-- P/N regions -->
+        <rect x="60" y="40" width="260" height="95" rx="10" fill="rgba(167,139,250,0.10)" stroke="rgba(167,139,250,0.28)" stroke-width="1"/>
+        <rect x="400" y="40" width="260" height="95" rx="10" fill="rgba(77,159,255,0.10)" stroke="rgba(77,159,255,0.28)" stroke-width="1"/>
+        <text x="190" y="70" text-anchor="middle" fill="#a78bfa" font-size="13" font-family="IBM Plex Mono">P-type</text>
+        <text x="530" y="70" text-anchor="middle" fill="#4d9fff" font-size="13" font-family="IBM Plex Mono">N-type</text>
+
+        <!-- Depletion zone -->
+        <rect x="320" y="40" width="80" height="95" rx="10" fill="rgba(245,166,35,0.10)" stroke="rgba(245,166,35,0.32)" stroke-width="1"/>
+        <text x="360" y="92" text-anchor="middle" fill="#f5a623" font-size="11" font-family="IBM Plex Mono">depletion</text>
+
+        <!-- Bound charges -->
+        <!-- Negative acceptor ions on P-side edge -->
+        <circle cx="300" cy="105" r="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,107,107,0.7)" stroke-width="1.4"/>
+        <text x="300" y="110" text-anchor="middle" fill="#ff6b6b" font-size="13" font-family="IBM Plex Mono">−</text>
+        <circle cx="270" cy="105" r="10" fill="rgba(255,255,255,0.02)" stroke="rgba(255,107,107,0.45)" stroke-width="1.2"/>
+        <text x="270" y="110" text-anchor="middle" fill="#ff6b6b" font-size="12" font-family="IBM Plex Mono">−</text>
+
+        <!-- Positive donor ions on N-side edge -->
+        <circle cx="420" cy="105" r="10" fill="rgba(255,255,255,0.02)" stroke="rgba(74,222,128,0.7)" stroke-width="1.4"/>
+        <text x="420" y="110" text-anchor="middle" fill="#4ade80" font-size="13" font-family="IBM Plex Mono">+</text>
+        <circle cx="450" cy="105" r="10" fill="rgba(255,255,255,0.02)" stroke="rgba(74,222,128,0.45)" stroke-width="1.2"/>
+        <text x="450" y="110" text-anchor="middle" fill="#4ade80" font-size="12" font-family="IBM Plex Mono">+</text>
+
+        <!-- E field direction (from + to -) -->
+        <line x1="450" y1="150" x2="270" y2="150" stroke="#f5a623" stroke-width="2" marker-end="url(#arr4)"/>
+        <text x="360" y="170" text-anchor="middle" fill="#f5a623" font-size="11" font-family="IBM Plex Mono">E alanı (N → P)</text>
+
+        <!-- W, xn, xp -->
+        <line x1="320" y1="36" x2="400" y2="36" stroke="#9898b0" stroke-width="1.3"/>
+        <line x1="320" y1="30" x2="320" y2="42" stroke="#9898b0" stroke-width="1.3"/>
+        <line x1="400" y1="30" x2="400" y2="42" stroke="#9898b0" stroke-width="1.3"/>
+        <text x="360" y="33" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">W</text>
+
+        <line x1="320" y1="135" x2="300" y2="135" stroke="rgba(120,120,200,0.45)" stroke-width="1.2"/>
+        <line x1="400" y1="135" x2="420" y2="135" stroke="rgba(120,120,200,0.45)" stroke-width="1.2"/>
+        <text x="310" y="130" text-anchor="end" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">x_p</text>
+        <text x="410" y="130" text-anchor="start" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">x_n</text>
+      </svg>
+    </div>
 
     <div class="card">
       <div class="card-title">Örnek: V₀ Hesabı</div>
-      <p style="font-size:13px;">N_A = 10¹⁷, N_D = 10¹⁶, nᵢ = 1.5×10¹⁰</p>
-      <p style="font-size:13px;margin-top:0.4rem;">N_A·N_D/nᵢ² = 10³³ / 2.25×10²⁰ = 4.44×10¹²</p>
-      <p style="font-size:13px;margin-top:0.4rem;">ln(4.44×10¹²) ≈ 29.1</p>
-      <div class="formula-block teal" style="font-size:13px;margin:0.75rem 0;">V₀ = 0.0259 × 29.1 = <strong>0.754 V</strong></div>
-      <p style="font-size:13px;">x_n/x_p = 10¹⁷/10¹⁶ = <strong class="hl-amber">10</strong> → N tarafı 10× daha geniş</p>
+      <p style="font-size:13px;">\(N_A = 10^{17}\), \(N_D = 10^{16}\), \(n_i = 1.5\times10^{10}\)</p>
+      <p style="font-size:13px;margin-top:0.4rem;">\(\frac{N_A N_D}{n_i^2} = \frac{10^{33}}{2.25\times10^{20}} = 4.44\times10^{12}\)</p>
+      <p style="font-size:13px;margin-top:0.4rem;">\(\ln(4.44\times10^{12}) \approx 29.1\)</p>
+      <div class="formula-block teal" style="font-size:13px;margin:0.75rem 0;">\[ V_0 = 0.0259 \times 29.1 \approx \mathbf{0.754}\ \text{V} \]</div>
+      <p style="font-size:13px;">\(\frac{x_n}{x_p}=\frac{10^{17}}{10^{16}}=\) <strong class="hl-amber">10</strong> → N tarafı 10× daha geniş</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.4.2)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(N_A\) çok büyük, \(N_D\) küçükse depletion hangi tarafta büyür?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(\frac{x_n}{x_p}=\frac{N_A}{N_D}\). \(N_A\gg N_D\) ise \(x_n\gg x_p\) → <span class="hl-teal">az doplu N tarafında</span> depletion daha genişler.</p>
     </div>
   </div>
 
@@ -851,6 +1499,51 @@ body {
     <div class="section-header">
       <span class="section-num">3.4.3–4</span>
       <h3>Forward & Reverse Bias</h3>
+    </div>
+
+    <div class="diagram">
+      <svg width="100%" viewBox="0 0 720 250">
+        <defs>
+          <marker id="arr-bias" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="360" y="20" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">BIAS ETKİSİ: Bariyer ve Depletion Genişliği</text>
+
+        <!-- Forward panel -->
+        <rect x="50" y="45" width="300" height="175" rx="12" fill="rgba(74,222,128,0.06)" stroke="rgba(74,222,128,0.22)" stroke-width="1"/>
+        <text x="200" y="72" text-anchor="middle" fill="#4ade80" font-size="13" font-family="IBM Plex Mono">Forward Bias</text>
+        <text x="200" y="92" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">(+ P'ye, − N'ye)</text>
+
+        <!-- barrier sketch -->
+        <line x1="90" y1="170" x2="310" y2="170" stroke="rgba(120,120,200,0.25)" stroke-width="1"/>
+        <path d="M90 170 C140 120, 180 110, 200 110 C220 110, 260 120, 310 170" fill="none" stroke="rgba(245,166,35,0.9)" stroke-width="2.5"/>
+        <text x="200" y="130" text-anchor="middle" fill="#f5a623" font-size="10" font-family="IBM Plex Mono">bariyer ↓</text>
+
+        <!-- depletion width -->
+        <rect x="185" y="115" width="30" height="70" rx="8" fill="rgba(245,166,35,0.12)" stroke="rgba(245,166,35,0.30)" stroke-width="1"/>
+        <text x="200" y="205" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">W dar</text>
+
+        <!-- injection arrows -->
+        <line x1="120" y1="110" x2="180" y2="110" stroke="rgba(167,139,250,0.8)" stroke-width="2" marker-end="url(#arr-bias)"/>
+        <line x1="280" y1="110" x2="220" y2="110" stroke="rgba(77,159,255,0.8)" stroke-width="2" marker-end="url(#arr-bias)"/>
+        <text x="150" y="104" text-anchor="middle" fill="#a78bfa" font-size="10" font-family="IBM Plex Mono">hole →</text>
+        <text x="250" y="104" text-anchor="middle" fill="#4d9fff" font-size="10" font-family="IBM Plex Mono">← e⁻</text>
+
+        <!-- Reverse panel -->
+        <rect x="370" y="45" width="300" height="175" rx="12" fill="rgba(255,107,107,0.06)" stroke="rgba(255,107,107,0.22)" stroke-width="1"/>
+        <text x="520" y="72" text-anchor="middle" fill="#ff6b6b" font-size="13" font-family="IBM Plex Mono">Reverse Bias</text>
+        <text x="520" y="92" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">(− P'ye, + N'ye)</text>
+
+        <line x1="410" y1="170" x2="630" y2="170" stroke="rgba(120,120,200,0.25)" stroke-width="1"/>
+        <path d="M410 170 C460 85, 500 70, 520 70 C540 70, 580 85, 630 170" fill="none" stroke="rgba(245,166,35,0.9)" stroke-width="2.5"/>
+        <text x="520" y="102" text-anchor="middle" fill="#f5a623" font-size="10" font-family="IBM Plex Mono">bariyer ↑</text>
+
+        <rect x="495" y="95" width="50" height="95" rx="10" fill="rgba(245,166,35,0.12)" stroke="rgba(245,166,35,0.30)" stroke-width="1"/>
+        <text x="520" y="205" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">W geniş</text>
+
+        <text x="520" y="135" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">akım ≈ −I_S</text>
+      </svg>
     </div>
 
     <div class="bias-grid">
@@ -875,15 +1568,21 @@ body {
         <div class="row"><span class="k">Bariyer</span><span class="v">V₀ + V_R ↑</span></div>
         <div class="row"><span class="k">Depletion</span><span class="v">Genişler ↑</span></div>
         <div class="row"><span class="k">W formülü</span><span class="v">V₀ → V₀+V_R</span></div>
-        <div class="row"><span class="k">Akım</span><span class="v">≈ 0 (−Iₛ) ✗</span></div>
+        <div class="row"><span class="k">Akım</span><span class="v">≈ 0 (−I_S) ✗</span></div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">Minority Carrier Injection (Forward Bias)</div>
       <p style="font-size:13px;">Forward bias'ta majority carrier'lar junction'ı geçer ve karşı tarafta minority carrier olur. Junction'dan uzaklaştıkça üstel azalır:</p>
-      <div class="formula-block" style="font-size:13px;margin:0.75rem 0;">p_n(x) ~ e^(−x/L_p)</div>
+      <div class="formula-block" style="font-size:13px;margin:0.75rem 0;">\[ p_n(x)\propto e^{-x/L_p} \]</div>
       <p style="font-size:13px;"><span class="hl-teal">Lₚ, Lₙ = diffusion length</span> — recombine olmadan gidilen mesafe.</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.4.3–4)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> Reverse bias’ta \(W\) formülünde ne değişir?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> Reverse bias bariyeri artırır: \(V_0 \rightarrow V_0+V_R\). Dolayısıyla \(W \propto \sqrt{V}\) olduğu için <span class="hl-teal">W artar</span> (kök ile).</p>
     </div>
   </div>
 
@@ -896,49 +1595,83 @@ body {
       <h3>Junction Diode — I-V Karakteristiği</h3>
     </div>
 
-    <div class="formula-block green" style="font-size:18px;">i = Iₛ · (e^(v/V_T) − 1)</div>
+    <div class="formula-block green" style="font-size:18px;">\[ i = I_S\left(e^{v/V_T} - 1\right) \]</div>
     <div class="formula-label">diyot denklemi — tam formül</div>
 
     <div class="diagram">
-      <svg width="100%" viewBox="0 0 560 220">
-        <defs><marker id="a3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.5"/></marker></defs>
-        <!-- Axes -->
-        <line x1="80" y1="170" x2="500" y2="170" stroke="#9898b0" stroke-width="1" marker-end="url(#a3)"/>
-        <line x1="240" y1="200" x2="240" y2="20" stroke="#9898b0" stroke-width="1" marker-end="url(#a3)"/>
-        <text x="508" y="174" fill="#9898b0" font-size="13" font-family="IBM Plex Mono">v</text>
-        <text x="248" y="18" fill="#9898b0" font-size="13" font-family="IBM Plex Mono">i</text>
-        <!-- 0.7V marker -->
-        <line x1="340" y1="165" x2="340" y2="175" stroke="#9898b0" stroke-width="1"/>
-        <text x="340" y="188" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">0.7V</text>
-        <line x1="340" y1="170" x2="340" y2="40" stroke="rgba(120,120,200,0.2)" stroke-width="1" stroke-dasharray="4 3"/>
-        <!-- Reverse bias line -->
-        <line x1="82" y1="168" x2="240" y2="168" stroke="#ff6b6b" stroke-width="2.5"/>
-        <!-- Forward bias curve -->
-        <path d="M240 168 Q270 167 295 164 Q310 161 322 156 Q330 148 336 138 Q340 126 343 112 Q346 96 348 78 Q350 58 351 40" fill="none" stroke="#4ade80" stroke-width="2.5"/>
-        <!-- Labels -->
-        <rect x="85" y="145" width="120" height="30" rx="5" fill="rgba(255,107,107,0.1)" stroke="rgba(255,107,107,0.2)" stroke-width="1"/>
-        <text x="145" y="164" text-anchor="middle" fill="#ff6b6b" font-size="11" font-family="IBM Plex Mono">i ≈ −Iₛ ≈ 0</text>
-        <rect x="360" y="80" width="130" height="40" rx="5" fill="rgba(74,222,128,0.1)" stroke="rgba(74,222,128,0.2)" stroke-width="1"/>
-        <text x="425" y="98" text-anchor="middle" fill="#4ade80" font-size="11" font-family="IBM Plex Mono">İletim bölgesi</text>
-        <text x="425" y="113" text-anchor="middle" fill="#4ade80" font-size="10" font-family="IBM Plex Mono">i = Iₛ·e^(v/Vt)</text>
+      <svg width="100%" viewBox="0 0 720 240">
+        <defs>
+          <marker id="arr-iv2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M2 1L8 5L2 9" fill="none" stroke="#9898b0" stroke-width="1.6"/>
+          </marker>
+        </defs>
+        <text x="360" y="20" text-anchor="middle" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">DİYOT I–V: Linear eksen + (mantık) Semilog davranış</text>
+
+        <!-- axes box -->
+        <rect x="55" y="42" width="610" height="170" rx="12" fill="rgba(255,255,255,0.02)" stroke="rgba(120,120,200,0.18)" stroke-width="1"/>
+
+        <!-- axes -->
+        <line x1="110" y1="185" x2="640" y2="185" stroke="#9898b0" stroke-width="1.2" marker-end="url(#arr-iv2)"/>
+        <line x1="360" y1="200" x2="360" y2="65" stroke="#9898b0" stroke-width="1.2" marker-end="url(#arr-iv2)"/>
+        <text x="648" y="189" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">v</text>
+        <text x="368" y="63" fill="#9898b0" font-size="11" font-family="IBM Plex Mono">i</text>
+
+        <!-- reverse approx -Is -->
+        <line x1="112" y1="178" x2="360" y2="178" stroke="rgba(255,107,107,0.9)" stroke-width="2.8"/>
+        <rect x="140" y="150" width="150" height="28" rx="10" fill="rgba(255,107,107,0.08)" stroke="rgba(255,107,107,0.22)" stroke-width="1"/>
+        <text x="215" y="169" text-anchor="middle" fill="#ff6b6b" font-size="10" font-family="IBM Plex Mono">reverse: i ≈ −I_S</text>
+
+        <!-- forward exponential-like curve -->
+        <path d="M360 178 C390 178, 420 176, 448 170 C472 165, 490 155, 505 140 C520 120, 535 95, 548 70" fill="none" stroke="rgba(74,222,128,0.95)" stroke-width="3"/>
+
+        <!-- knee marker -->
+        <line x1="460" y1="180" x2="460" y2="70" stroke="rgba(120,120,200,0.22)" stroke-width="1" stroke-dasharray="5 4"/>
+        <line x1="460" y1="185" x2="460" y2="193" stroke="#9898b0" stroke-width="1.2"/>
+        <text x="460" y="208" text-anchor="middle" fill="#9898b0" font-size="10" font-family="IBM Plex Mono">~0.7V</text>
+
+        <!-- forward label -->
+        <rect x="520" y="92" width="135" height="42" rx="10" fill="rgba(74,222,128,0.08)" stroke="rgba(74,222,128,0.22)" stroke-width="1"/>
+        <text x="588" y="112" text-anchor="middle" fill="#4ade80" font-size="10" font-family="IBM Plex Mono">forward:</text>
+        <text x="588" y="128" text-anchor="middle" fill="#4ade80" font-size="10" font-family="IBM Plex Mono">i ≈ I_S e^{v/V_T}</text>
+
+        <!-- semilog hint -->
+        <rect x="110" y="70" width="330" height="34" rx="10" fill="rgba(245,166,35,0.06)" stroke="rgba(245,166,35,0.22)" stroke-width="1"/>
+        <text x="275" y="92" text-anchor="middle" fill="#f5a623" font-size="10" font-family="IBM Plex Mono">Semilog grafikte forward bölge düz çizgi olur (log(i) ~ v)</text>
       </svg>
     </div>
+
+    <!-- (Eski küçük I-V şeması kaldırıldı: yeni slayt tarzı I–V şeması üstte var) -->
 
     <table class="data-table">
       <tr><th>v değeri</th><th>Durum</th><th>i değeri</th></tr>
       <tr><td>v = 0</td><td style="color:var(--text2);">Açık devre</td><td class="mono">0</td></tr>
       <tr><td>v = +0.7V</td><td style="color:var(--green);">Forward bias açık</td><td class="mono">~0.5 mA</td></tr>
-      <tr><td>v = −1V</td><td style="color:var(--red);">Reverse bias</td><td class="mono">≈ −Iₛ ≈ 0</td></tr>
+      <tr><td>v = −1V</td><td style="color:var(--red);">Reverse bias</td><td class="mono">≈ −I_S ≈ 0</td></tr>
     </table>
 
-    <div class="formula-block amber">Iₛ = Aqnᵢ² · (Dₚ/LₚN_D + Dₙ/LₙN_A)</div>
+    <div class="formula-block amber">\[ I_S = A q n_i^2\left(\frac{D_p}{L_p N_D} + \frac{D_n}{L_n N_A}\right) \]</div>
     <div class="formula-label">saturation current — ~10⁻¹⁵ A, sıcaklığa çok bağlı</div>
 
     <div class="card">
       <div class="card-title">Example 3.6 — pn Junction</div>
-      <p style="font-size:13px;">N_A=10¹⁸, N_D=10¹⁶, A=10⁻⁴ cm², I=0.1 mA, Lₚ=5μm, Lₙ=10μm, Dₚ=10, Dₙ=18</p>
-      <p style="font-size:13px;margin-top:0.5rem;"><strong>(a) Iₛ:</strong> = Aqnᵢ²(Dₚ/LₚN_D) ≈ <span class="hl-teal">7.2×10⁻¹⁵ A</span></p>
-      <p style="font-size:13px;margin-top:0.3rem;"><strong>(b) V:</strong> = V_T·ln(I/Iₛ) = 0.0259 × ln(10⁻⁴/7.2×10⁻¹⁵) ≈ <span class="hl-teal">0.597 V</span></p>
+      <p style="font-size:13px;">\[
+        N_A=10^{18},\ 
+        N_D=10^{16},\ 
+        A=10^{-4}\ \text{cm}^2,\ 
+        I=0.1\ \text{mA},\ 
+        L_p=5\ \mu\text{m},\ 
+        L_n=10\ \mu\text{m},\ 
+        D_p=10,\ 
+        D_n=18
+      \]</p>
+      <p style="font-size:13px;margin-top:0.5rem;"><strong>(a) \(I_S\):</strong> \(\;I_S=Aqn_i^2\left(\frac{D_p}{L_pN_D}\right)\approx\) <span class="hl-teal">\(7.2\times10^{-15}\ \text{A}\)</span></p>
+      <p style="font-size:13px;margin-top:0.3rem;"><strong>(b) \(V\):</strong> \(\;V=V_T\ln(I/I_S)=0.0259\ln(10^{-4}/(7.2\times10^{-15}))\approx\) <span class="hl-teal">\(0.597\ \text{V}\)</span></p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Mini örnek (3.5)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> Akım 10× artarsa diyot üzerindeki \(v\) yaklaşık ne kadar artar?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> Forward bölgede \(i \approx I_S e^{v/V_T}\). Oran alınır: \(\frac{i_2}{i_1}=e^{(v_2-v_1)/V_T}\). \(10=e^{\Delta v/V_T}\) → \(\Delta v=V_T\ln 10 \approx 0.0259\times2.303 \approx \mathbf{59.6\text{ mV}}\).</p>
     </div>
   </div>
 
@@ -947,23 +1680,23 @@ body {
   <!-- Formül Özeti -->
   <div class="section" id="formulas">
     <div class="section-header">
-      <span class="section-num">ÖZet</span>
+      <span class="section-num">Özet</span>
       <h3>Tüm Formüller</h3>
     </div>
 
     <table class="data-table">
       <tr><th>Formül</th><th>Adı</th><th>Açıklama</th></tr>
-      <tr><td class="mono hl-teal">n = p = nᵢ</td><td>Intrinsic denge</td><td style="color:var(--text2);">Saf silikon, oda sıcaklığı</td></tr>
-      <tr><td class="mono hl-amber">n · p = nᵢ²</td><td>Kütle etkisi yasası</td><td style="color:var(--text2);">Her zaman sabit</td></tr>
-      <tr><td class="mono hl-blue">J = q(pμ_p + nμ_n)E</td><td>Drift akımı</td><td style="color:var(--text2);">E alanı etkisi</td></tr>
-      <tr><td class="mono hl-red">J_p = −qD_p·dp/dx</td><td>Hole diffusion</td><td style="color:var(--text2);">Konsantrasyon farkı</td></tr>
-      <tr><td class="mono hl-blue">J_n = qD_n·dn/dx</td><td>Elektron diffusion</td><td style="color:var(--text2);">Konsantrasyon farkı</td></tr>
-      <tr><td class="mono hl-teal">D/μ = V_T = 25.9mV</td><td>Einstein ilişkisi</td><td style="color:var(--text2);">Termal voltaj</td></tr>
-      <tr><td class="mono hl-amber">σ = q(pμ_p + nμ_n)</td><td>Conductivity</td><td style="color:var(--text2);">İletkenlik</td></tr>
-      <tr><td class="mono hl-red">ρ = 1/σ</td><td>Resistivity</td><td style="color:var(--text2);">Özdirenç [Ω·cm]</td></tr>
-      <tr><td class="mono hl-teal">V₀ = V_T·ln(N_A·N_D/nᵢ²)</td><td>Built-in voltage</td><td style="color:var(--text2);">0.6–0.9V tipik</td></tr>
-      <tr><td class="mono hl-blue">x_n/x_p = N_A/N_D</td><td>Depletion asimetrisi</td><td style="color:var(--text2);">Az doplanan = geniş</td></tr>
-      <tr><td class="mono hl-green">i = Iₛ(e^(v/V_T)−1)</td><td>Diyot denklemi</td><td style="color:var(--text2);">Tam formül</td></tr>
+      <tr><td class="mono hl-teal">\(n=p=n_i\)</td><td>Intrinsic denge</td><td style="color:var(--text2);">Saf silikon, oda sıcaklığı</td></tr>
+      <tr><td class="mono hl-amber">\(np=n_i^2\)</td><td>Kütle etkisi yasası</td><td style="color:var(--text2);">Her zaman sabit</td></tr>
+      <tr><td class="mono hl-blue">\(J_{\text{drift}}=q(p\mu_p+n\mu_n)E\)</td><td>Drift akımı</td><td style="color:var(--text2);">E alanı etkisi</td></tr>
+      <tr><td class="mono hl-red">\(J_p=-qD_p\,dp/dx\)</td><td>Hole diffusion</td><td style="color:var(--text2);">Konsantrasyon farkı</td></tr>
+      <tr><td class="mono hl-blue">\(J_n=+qD_n\,dn/dx\)</td><td>Elektron diffusion</td><td style="color:var(--text2);">Konsantrasyon farkı</td></tr>
+      <tr><td class="mono hl-teal">\(D/\mu=V_T=25.9\text{ mV}\)</td><td>Einstein ilişkisi</td><td style="color:var(--text2);">Termal voltaj</td></tr>
+      <tr><td class="mono hl-amber">\(\sigma=q(p\mu_p+n\mu_n)\)</td><td>Conductivity</td><td style="color:var(--text2);">İletkenlik</td></tr>
+      <tr><td class="mono hl-red">\(\rho=1/\sigma\)</td><td>Resistivity</td><td style="color:var(--text2);">Özdirenç [Ω·cm]</td></tr>
+      <tr><td class="mono hl-teal">\(V_0=V_T\ln(N_AN_D/n_i^2)\)</td><td>Built-in voltage</td><td style="color:var(--text2);">0.6–0.9V tipik</td></tr>
+      <tr><td class="mono hl-blue">\(x_n/x_p=N_A/N_D\)</td><td>Depletion asimetrisi</td><td style="color:var(--text2);">Az doplanan = geniş</td></tr>
+      <tr><td class="mono hl-green">\(i=I_S(e^{v/V_T}-1)\)</td><td>Diyot denklemi</td><td style="color:var(--text2);">Tam formül</td></tr>
     </table>
 
     <div class="callout key" style="margin-top:1.5rem;">
@@ -972,19 +1705,101 @@ body {
     </div>
   </div>
 
+  <hr class="divider">
+
+  <!-- Çözümlü Örnekler -->
+  <div class="section" id="examples">
+    <div class="section-header">
+      <span class="section-num">Ek</span>
+      <h3>Çözümlü Örnekler (Kısa)</h3>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Örnek A — Mass action (np = nᵢ²)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(n=5\times10^{15}\ \text{cm}^{-3}\) ise \(p\) nedir? (\(n_i=1.5\times10^{10}\))</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(p=n_i^2/n=(2.25\times10^{20})/(5\times10^{15})=4.5\times10^4\ \text{cm}^{-3}\).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Örnek B — Drift (J = qnμE)</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(n=10^{16}\), \(\mu_n=1350\), \(E=0.2\ \text{V/cm}\). \(J\) ?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(J\approx qn\mu_nE = (1.6\times10^{-19})(10^{16})(1350)(0.2)\approx 0.432\ \text{A/cm}^2\).</p>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Örnek C — Diyot (V = V_T ln(I/I_S))</div>
+      <p style="font-size:13px;"><strong>Soru:</strong> \(I_S=10^{-15}\ \text{A}\), \(I=1\ \text{mA}\). 300K’da \(v\) ?</p>
+      <p style="font-size:13px;margin-top:0.4rem;"><strong>Çözüm:</strong> \(v=V_T\ln(I/I_S)=0.0259\ln(10^{-3}/10^{-15})=0.0259\ln(10^{12})\approx 0.0259(27.63)\approx 0.716\ \text{V}\).</p>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Terimler -->
+  <div class="section" id="glossary">
+    <div class="section-header">
+      <span class="section-num">TR/EN</span>
+      <h3>Terimler Sözlüğü</h3>
+    </div>
+
+    <table class="data-table">
+      <tr><th>Terim (TR)</th><th>English</th><th>Not</th></tr>
+      <tr><td>Yarıiletken</td><td class="mono">Semiconductor</td><td style="color:var(--text2);">İletken–yalıtkan arası, kontrol edilebilir σ</td></tr>
+      <tr><td>Katkılama</td><td class="mono">Doping</td><td style="color:var(--text2);">Donor/acceptor ekleyip n/p’yi ayarlama</td></tr>
+      <tr><td>Üretim</td><td class="mono">Generation</td><td style="color:var(--text2);">e⁻–hole çifti oluşumu</td></tr>
+      <tr><td>Birleşme</td><td class="mono">Recombination</td><td style="color:var(--text2);">e⁻ ve hole’un yok olması</td></tr>
+      <tr><td>Çoğunluk taşıyıcı</td><td class="mono">Majority carrier</td><td style="color:var(--text2);">N-type: e⁻, P-type: hole</td></tr>
+      <tr><td>Azınlık taşıyıcı</td><td class="mono">Minority carrier</td><td style="color:var(--text2);">Çoğunluğun tersi</td></tr>
+      <tr><td>Hareketlilik</td><td class="mono">Mobility (μ)</td><td style="color:var(--text2);">E alanına hız cevabı</td></tr>
+      <tr><td>Difüzyon sabiti</td><td class="mono">Diffusion constant (D)</td><td style="color:var(--text2);">Konsantrasyon gradyanına yayılma</td></tr>
+      <tr><td>Termal voltaj</td><td class="mono">Thermal voltage (V_T)</td><td style="color:var(--text2);">\(kT/q\), 300K: 25.9 mV</td></tr>
+      <tr><td>Deplesyon bölgesi</td><td class="mono">Depletion region</td><td style="color:var(--text2);">Taşıyıcısız boş bölge</td></tr>
+      <tr><td>Bariyer voltajı</td><td class="mono">Built-in / barrier voltage (V₀)</td><td style="color:var(--text2);">pn’de iç potansiyel</td></tr>
+      <tr><td>Doyum akımı</td><td class="mono">Saturation current (I_S)</td><td style="color:var(--text2);">Ters polarmadaki küçük akım ölçeği</td></tr>
+    </table>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Formül Tablosu -->
+  <div class="section" id="formula-table">
+    <div class="section-header">
+      <span class="section-num">Tablo</span>
+      <h3>Formül Tablosu (Geniş)</h3>
+    </div>
+
+    <table class="data-table">
+      <tr><th>Bağıntı</th><th>Ne zaman?</th><th>Birim / İpucu</th></tr>
+      <tr><td class="mono hl-teal">\(n=p=n_i\)</td><td>Intrinsic, denge</td><td style="color:var(--text2);">Si @300K: \(n_i\approx1.5\times10^{10}\ \text{cm}^{-3}\)</td></tr>
+      <tr><td class="mono hl-amber">\(np=n_i^2\)</td><td>Termal denge</td><td style="color:var(--text2);">Doping ile biri ↑ ise diğeri ↓</td></tr>
+      <tr><td class="mono hl-blue">\(v_p=\mu_pE,\ v_n=-\mu_nE\)</td><td>Drift</td><td style="color:var(--text2);">\(\mu\): cm²/Vs, \(E\): V/cm</td></tr>
+      <tr><td class="mono hl-green">\(J=q(p\mu_p+n\mu_n)E\)</td><td>Drift toplam</td><td style="color:var(--text2);">\(J\): A/cm², \(\sigma=q(p\mu_p+n\mu_n)\)</td></tr>
+      <tr><td class="mono hl-red">\(J_p=-qD_p\,dp/dx\)</td><td>Diffusion (hole)</td><td style="color:var(--text2);">\(D\): cm²/s, \(dp/dx\): cm⁻⁴</td></tr>
+      <tr><td class="mono hl-blue">\(J_n=+qD_n\,dn/dx\)</td><td>Diffusion (electron)</td><td style="color:var(--text2);">İşaret yükten gelir</td></tr>
+      <tr><td class="mono hl-teal">\(D=\mu V_T\)</td><td>Einstein</td><td style="color:var(--text2);">300K: \(V_T=0.0259\ \text{V}\)</td></tr>
+      <tr><td class="mono hl-teal">\(V_0=V_T\ln(N_AN_D/n_i^2)\)</td><td>pn, open-circuit</td><td style="color:var(--text2);">Tipik: 0.6–0.9 V</td></tr>
+      <tr><td class="mono hl-blue">\(W=\sqrt{\frac{2\varepsilon_s}{q}\left(\frac{1}{N_A}+\frac{1}{N_D}\right)V}\)</td><td>Depletion genişliği</td><td style="color:var(--text2);">Reverse: \(V=V_0+V_R\)</td></tr>
+      <tr><td class="mono hl-green">\(i=I_S(e^{v/V_T}-1)\)</td><td>Diyot</td><td style="color:var(--text2);">Forward: \(i\approx I_Se^{v/V_T}\)</td></tr>
+      <tr><td class="mono hl-amber">\(v=V_T\ln(i/I_S)\)</td><td>Forward yaklaşık</td><td style="color:var(--text2);">10× akım artışı → \(\Delta v\approx V_T\ln10\approx60\) mV</td></tr>
+      <tr><td class="mono hl-amber">\(I_S=Aqn_i^2(\frac{D_p}{L_pN_D}+\frac{D_n}{L_nN_A})\)</td><td>Diyot ölçeği</td><td style="color:var(--text2);">Sıcaklık arttıkça \(I_S\) çok büyür</td></tr>
+    </table>
+  </div>
+
 </main>
 </div>
 
 <script>
-// Smooth scroll
-function scrollTo(id) {
-  document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
-  document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-  event.target.classList.add('active');
+// Smooth scroll (adı window.scrollTo ile çakışmasın diye navigateToSection)
+function navigateToSection(id, navEl) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  document.querySelectorAll('.nav-item').forEach(function (n) { n.classList.remove('active'); });
+  if (navEl && navEl.classList) navEl.classList.add('active');
 }
 
 // Active nav on scroll
-const sections = ['s31','s32','s33','s332','s333','s334','s341','s342','s343','s35','formulas','quiz'];
+const sections = ['s31','s32','s33','s332','s333','s334','s341','s342','s343','s35','formulas','examples','glossary','formula-table','quiz'];
 const navItems = document.querySelectorAll('.nav-item');
 
 window.addEventListener('scroll', () => {
@@ -1548,6 +2363,8 @@ window.addEventListener('DOMContentLoaded', function() {
   buildQuiz();
 });
 </script>
+
+<footer class="page-footer">yunus emre çiftçi - ben yemicem -</footer>
 
 </body>
 </html>
